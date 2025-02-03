@@ -18,19 +18,23 @@ calculations_collection = db.information
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-  pass
+    return render_template("profile.html")
+
 
 @app.route("/profile")
 def profile():
-  return render_template("profile.html")
+    return render_template("profile.html")
+
 
 @app.route("/delete/<id>", methods=["POST"])
 def delete(_id):
-  pass
+    pass
+
 
 @app.route("/something/<_id>", methods=["GET"])
 def another_func(_id):
-  pass
+    pass
+
 
 if __name__ == "__main__":
-  app.run(debug=True)
+    app.run(debug=True)
