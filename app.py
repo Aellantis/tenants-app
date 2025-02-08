@@ -16,9 +16,14 @@ db = client.tenant_app
 calculations_collection = db.information
 
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/")
 def index():
-    return render_template("profile.html")
+    return render_template("home.html")
+
+
+@app.route("/home")
+def home():
+    pass
 
 
 @app.route("/profile")
