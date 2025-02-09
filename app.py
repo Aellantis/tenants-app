@@ -55,11 +55,11 @@ transactions_collection = db.transactions
 # "amount": 1200.00,
 # "payment_method": "credit_card",
 # "transaction_status": "completed",
-#  Possible values:
+#  (Possible values:
 
 # "pending"
 # "completed"
-# "failed"
+# "failed")
 # "transaction_date": "2024-02-01T14:30:00Z",
 # "gateway_response": {
 #     "transaction_id": "tx_987654321",
@@ -74,8 +74,54 @@ def index():
     return render_template("home.html")
 
 
-@app.route("/payment")
+@app.route("/payment", methods=["GET", "POST"])
 def payment():
+    if request.method == "POST":
+        # Assuming tenant_id is stored in session
+        tenant_id = request.form.get("tenant_id")
+        amount = float(request.form.get("amount"))
+        payment_method = request.form.get("payment_method")
+        payment_date = request.form.get("payment_date")
+        transaction_status = "pending"
+
+        if not tenant_id or not amount or not payment_method or not payment_date:
+            flash("All fields are required.", "danger")
+            return redirect(url_for("payment"))
+
+        try:
+            tenant_id = ObjectId(tenant_id)
+            amount = float(amount)
+        except ValueError:
+            flash("Invalid data format.", "danger")
+            return redirect(url_for("payment"))
+
+        payment_record = {
+            "tenant_id": ObjectId(tenant_id),
+            "amount": amount,
+            "payment_method": payment_method,
+            "payment_date": payment_date,
+            "status": "completed"
+        }
+        payment_id = payments_collection.insert_one(payment_record).inserted_id
+
+        transaction_record = {
+            "tenant_id": ObjectId(tenant_id),
+            "payment_id": payment_id,
+            "amount": amount,
+            "payment_method": payment_method,
+            "transaction_status": "completed",
+            "transaction_date": payment_date,
+            "gateway_response": {
+                "transaction_id": f"tx_{payment_id}",
+                "status": "approved",
+                "gateway": "Stripe"
+            }
+        }
+        transactions_collection.insert_one(transaction_record)
+
+        flash("Payment successfully recorded.", "success")
+        return redirect(url_for("payment"))
+
     return render_template("payment.html")
 
 
