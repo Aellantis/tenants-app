@@ -2,121 +2,84 @@
 
 {% block content %}
 
-	<div class="container mt-4">
-			<form action="/profile" method="POST" class="row g-4">
-					<!-- Left Side: Username & Employer Info -->
-					<div class="col-md-4">
-							<div class="p-3 border rounded">
-									<h4>Username:</h4>
-									<label>First Name:</label>
-									<input type="text" class="form-control" id="name">
-									<label>Middle Initial:</label>
-									<input type="text" class="form-control">
-									<label>Last Name:</label>
-									<input type="text" class="form-control">
-									<label>Birthday:</label>
-									<input type="month" class="form-control">
-									<label>Age:</label>
-									<input type="number" class="form-control">
-									<label>Email:</label>
-									<input type="email" class="form-control">
-									<label>Phone Number:</label>
-									<input type="number" class="form-control">
-							</div>
-							<div class="p-3 border rounded mt-4">
-									<label>Current Employer:</label>
-									<input type="text" class="form-control">
-									<label>Employer Address:</label>
-									<input type="text" class="form-control">
-							</div>
-					</div>
-					
-					<!-- Right Side: Household Members -->
-					<div class="col-md-8">
-							<div class="row g-3">
-									<div class="col-md-6">
-											<div class="p-3 border rounded">
-													<h4>Household Member #1</h4>
-													<label>First Name:</label>
-													<input type="text" class="form-control">
-													<label>Middle Initial:</label>
-													<input type="text" class="form-control">
-													<label>Last Name:</label>
-													<input type="text" class="form-control">
-													<label>Birthday:</label>
-													<input type="month" class="form-control">
-													<label>Age:</label>
-													<input type="number" class="form-control">
-													<label>Email:</label>
-													<input type="text" class="form-control">
-													<label>Phone Number:</label>
-													<input type="number" class="form-control">
-											</div>
-									</div>
-									<div class="col-md-6">
-											<div class="p-3 border rounded">
-													<h4>Household Member #2</h4>
-													<label>First Name:</label>
-													<input type="text" class="form-control">
-													<label>Middle Initial:</label>
-													<input type="text" class="form-control">
-													<label>Last Name:</label>
-													<input type="text" class="form-control">
-													<label>Birthday:</label>
-													<input type="month" class="form-control">
-													<label>Age:</label>
-													<input type="number" class="form-control">
-													<label>Email:</label>
-													<input type="text" class="form-control">
-													<label>Phone Number:</label>
-													<input type="number" class="form-control">
-											</div>
-									</div>
-							</div>
-							<div class="row g-3 mt-4">
-									<div class="col-md-6">
-											<div class="p-3 border rounded">
-													<h4>Emergency Contact #1</h4>
-													<label>First Name:</label>
-													<input type="text" class="form-control">
-													<label>Middle Initial:</label>
-													<input type="text" class="form-control">
-													<label>Last Name:</label>
-													<input type="text" class="form-control">
-													<label for="relationship">Relationship:</label>
-													<select name="relationship" id="relationship" class="form-select">
-															<option value="family">Family</option>
-															<option value="friend">Friend</option>
-													</select>
-													<label>Email:</label>
-													<input type="text" class="form-control">
-													<label>Phone Number:</label>
-													<input type="number" class="form-control">
-											</div>
-									</div>
-									<div class="col-md-6">
-											<div class="p-3 border rounded">
-													<h4>Emergency Contact #2</h4>
-													<label>First Name:</label>
-													<input type="text" class="form-control">
-													<label>Middle Initial:</label>
-													<input type="text" class="form-control">
-													<label>Last Name:</label>
-													<input type="text" class="form-control">
-													<label for="relationship">Relationship:</label>
-													<select name="relationship" id="relationship" class="form-select">
-															<option value="family">Family</option>
-															<option value="friend">Friend</option>
-													</select>
-													<label>Email:</label>
-													<input type="text" class="form-control">
-													<label>Phone Number:</label>
-													<input type="number" class="form-control">
-											</div>
-									</div>
-							</div>
-					</div>
-			</form>
-	</div>
+<div class="container mt-4">
+    <form action="/profile" method="POST" class="row g-4">
+        <!-- Left Side: Username & Employer Info -->
+        <div class="col-md-4">
+                <div class="p-3">
+					<p class="">First Name: {{ tenant["user_first_name"] }}</p>
+                    <p class="">Middle Initial: {{ tenant["user_middle_initial"] }}</p>
+                    <p class="">Last Name: {{ tenant["user_last_name"] }}</p>
+                    
+                    <p class="">Birthday: {{ tenant["user_birthday"] }}</p>
+                    
+                    <p class="">Age: {{ tenant["user_age"] }}</p>
+                    
+                    <p class="">Email: {{ tenant["user_email"] }}</p>
+                    
+                    <p class="">Phone Number: {{ tenant["user_phone_num"] }}</p>
+                    
+                </div>
+                <div class="p-3">
+                    <p>Current Employer: {{ tenant["current_employer"] }}</p>
+                    <p>Employer Address: {{ tenant["employer_address"] }}</p>
+                </div>
+        </div>
+        
+        <!-- Right Side: Household Members -->
+        <div class="col-md-8">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="p-3">
+                        <h4>Household Member #1</h4>
+                        <p>First Name: {{ tenant["hm_first_name_1"] }}</p>
+                        <p>Middle Initial: {{ tenant["hm_m_initial_1"] }}</p>
+                        <p>Last Name: {{ tenant["hm_last_name_1"] }}</p>
+                        <p>Birthday: {{ tenant["hm_birthday_1"] }}</p>
+                        <p>Age: {{ tenant["hm_age_1"] }}</p>
+                        <p>Email: {{ tenant["hm_email_1"] }}</p>
+                        <p>Phone Number: {{ tenant["hm_phone_num_1"] }}</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-3">
+                        <h4>Household Member #2</h4>
+						<p>First Name: {{ tenant["hm_first_name_2"] }}</p>
+                        <p>Middle Initial: {{ tenant["hm_m_initial_2"] }}</p>
+                        <p>Last Name: {{ tenant["hm_last_name_2"] }}</p>
+                        <p>Birthday: {{ tenant["hm_birthday_2"] }}</p>
+                        <p>Age: {{ tenant["hm_age_2"] }}</p>
+                        <p>Email: {{ tenant["hm_email_2"] }}</p>
+                        <p>Phone Number: {{ tenant["hm_phone_num_2"] }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-3 mt-4">                
+                <div class="col-md-6">                   
+                    <div class="p-3">
+                        <h4>Emergency Contact #1</h4>
+                        <p>First Name: {{ tenant["er_first_name_1" ]}}</p>
+                        <p>Middle Initial: {{ tenant["er_m_initial_1" ]}}</p>
+                        <p>Last Name: {{ tenant["er_last_name_1" ]}}</p>
+                        <p>Relationship: {{ tenant["er_relationship_1"] }}</p>
+                        <p>Email: {{ tenant["er_email_1" ]}}</p>
+                        <p>Phone Number: {{ tenant["er_phone_num_1" ]}}</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-3">
+                        <h4>Emergency Contact #2</h4>
+						<p>First Name: {{ tenant["er_first_name_2" ]}}</p>
+                        <p>Middle Initial: {{ tenant["er_m_initial_2" ]}}</p>
+                        <p>Last Name: {{ tenant["er_last_name_2" ]}}</p>
+                        <p>Relationship: {{ tenant["er_relationship_2"] }}</p>
+                        <p>Email: {{ tenant["er_email_2" ]}}</p>
+                        <p>Phone Number: {{ tenant["er_phone_num_2" ]}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
 
 {% endblock %}
