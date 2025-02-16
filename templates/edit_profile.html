@@ -1,0 +1,125 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h1>Edit Profile</h1>
+    <form action="/edit/{{ tenant['_id'] }}" method="POST" class="row g-4">
+        <!-- Left Side: Username & Employer Info -->
+        <div class="col-md-4">
+                <div class="p-3 border rounded">
+                    <label>First Name:</label>
+                    <input type="text" class="form-control" id="name" name="user_first_name" value="{{ tenant['user_first_name'] }}">
+                    <label>Middle Initial:</label>
+                    <input type="text" class="form-control" name="user_middle_initial" value="{{ tenant['user_middle_initial'] }}">
+                    <label>Last Name:</label>
+                    <input type="text" class="form-control" name="user_last_name" value="{{ tenant['user_last_name'] }}">
+                    <label>Birthday:</label>
+                    <input type="month" class="form-control" name="user_birthday" value="{{ tenant['user_birthday'] }}">
+                    <label>Age:</label>
+                    <input type="number" class="form-control" name="user_age" value="{{ tenant['user_age'] }}">
+                    <label>Email:</label>
+                    <input type="email" class="form-control" name="user_email" value="{{ tenant['user_email'] }}">
+                    <label>Phone Number:</label>
+                    <input type="number" class="form-control" name="user_phone_num" value="{{ tenant['user_phone_num'] }}">
+                </div>
+                <div class="p-3 border rounded mt-4">
+                    <label>Current Employer:</label>
+                    <input type="text" class="form-control" name="current_employer" value="{{ tenant['current_employer'] }}">
+                    <label>Employer Address:</label>
+                    <input type="text" class="form-control" name="employer_address" value="{{ tenant['employer_address'] }}">
+                </div>
+        </div>
+        
+        <!-- Right Side: Household Members -->
+        <div class="col-md-8">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="p-3 border rounded">
+                        <h4>Household Member #1</h4>
+                        <label>First Name:</label>
+                        <input type="text" class="form-control" name="hm_first_name_1" value="{{ tenant['hm_first_name_1'] }}">
+                        <label>Middle Initial:</label>
+                        <input type="text" class="form-control" name="hm_m_initial_1" value="{{ tenant['hm_m_initial_1'] }}">
+                        <label>Last Name:</label>
+                        <input type="text" class="form-control" name="hm_last_name_1" value="{{ tenant['hm_last_name_1'] }}">
+                        <label>Birthday:</label>
+                        <input type="month" class="form-control" name="hm_birthday_1" value="{{ tenant['hm_birthday_1'] }}">
+                        <label>Age:</label>
+                        <input type="number" class="form-control" name="hm_age_1" value="{{ tenant['hm_age_1'] }}">
+                        <label>Email:</label>
+                        <input type="text" class="form-control" name="hm_email_1" value="{{ tenant['hm_email_1'] }}">
+                        <label>Phone Number:</label>
+                        <input type="number" class="form-control" name="hm_phone_num_1" value="{{ tenant['hm_phone_num_1'] }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-3 border rounded">
+                        <h4>Household Member #2</h4>
+                        <label>First Name:</label>
+                        <input type="text" class="form-control" name="hm_first_name_2" value="{{ tenant['hm_first_name_2'] }}">
+                        <label>Middle Initial:</label>
+                        <input type="text" class="form-control" name="hm_m_initial_2" value="{{ tenant['hm_m_initial_2'] }}">
+                        <label>Last Name:</label>
+                        <input type="text" class="form-control" name="hm_last_name_2" value="{{ tenant['hm_last_name_2'] }}">
+                        <label>Birthday:</label>
+                        <input type="month" class="form-control" name="hm_birthday_2" value="{{ tenant['hm_birthday_2'] }}">
+                        <label>Age:</label>
+                        <input type="number" class="form-control" name="hm_age_2" value="{{ tenant['hm_age_2'] }}">
+                        <label>Email:</label>
+                        <input type="text" class="form-control" name="hm_email_2" value="{{ tenant['hm_email_2'] }}">
+                        <label>Phone Number:</label>
+                        <input type="number" class="form-control" name="hm_phone_num_2" value="{{ tenant['hm_phone_num_2'] }}">
+                    </div>
+                </div>
+            </div>
+            <div class="row g-3 mt-4">                
+                <div class="col-md-6">                   
+                    <div class="p-3 border rounded">
+                        <h4>Emergency Contact #1</h4>
+                        <label>First Name:</label>
+                        <input type="text" class="form-control" name="er_first_name_1" value="{{ tenant['er_first_name_1'] }}">
+                        <label>Middle Initial:</label>
+                        <input type="text" class="form-control" name="er_m_initial_1" value="{{ tenant['er_m_initial_1'] }}">
+                        <label>Last Name:</label>
+                        <input type="text" class="form-control" name="er_last_name_1" value="{{ tenant['er_last_name_1'] }}">
+                        <label for="relationship">Relationship:</label>
+                        <select name="er_relationship_1" id="relationship1" class="form-select" value="{{ tenant['er_relationship_1'] }}">
+                            <option value="contact"></option>
+                            <option value="family">Family</option>
+                            <option value="friend">Friend</option>
+                        </select>
+                        <label>Email:</label>
+                        <input type="text" class="form-control" name="er_email_1" value="{{ tenant['er_email_1'] }}">
+                        <label>Phone Number:</label>
+                        <input type="number" class="form-control" name="er_phone_num_1" value="{{ tenant['er_phone_num_1'] }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-3 border rounded">
+                        <h4>Emergency Contact #2</h4>
+                        <label>First Name:</label>
+                        <input type="text" class="form-control" name="er_first_name_2" value="{{ tenant['er_first_name_2'] }}">
+                        <label>Middle Initial:</label> 
+                        <input type="text" class="form-control" name="er_m_initial_2" value="{{ tenant['er_m_initial_2'] }}">
+                        <label>Last Name:</label>
+                        <input type="text" class="form-control" name="er_last_name_2" value="{{ tenant['er_last_name_2'] }}">
+                        <label for="relationship">Relationship:</label>
+                        <select name="er_relationship_2" id="relationship2" class="form-select" value="{{ tenant['er_relationship_2'] }}">
+                            <option value="contact"></option>
+                            <option value="family">Family</option>
+                            <option value="friend">Friend</option>
+                        </select>
+                        <label>Email:</label>
+                        <input type="text" class="form-control" name="er_email_2" value="{{ tenant['er_email_2'] }}">
+                        <label>Phone Number:</label>
+                        <input type="number" class="form-control" name="er_phone_num_2" value="{{ tenant['er_phone_num_2'] }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <input type="submit" class="submit" value="Submit">
+    </form>
+</div>
+
+{% endblock %}

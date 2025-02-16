@@ -166,11 +166,9 @@ def create():
             "er_last_name_2": request.form.get("er_last_name_2"),
             "er_relationship_2": request.form.get("er_relationship_2"),
             "er_email_2": request.form.get("er_email_2"),
-            "er_phone_num_2": request.form.get("er_phone_num_2"),
+            "er_phone_num_2": request.form.get("er_phone_num_2")
         }
         tenant_insert = mongo.db.tenants.insert_one(new_tenant).inserted_id
-        print("******")
-        print(f"Inserted Tenant ID: {tenant_insert}")
         return redirect(url_for("profile", tenant_id=tenant_insert)) 
     return render_template("create_tenant.html")
 
@@ -180,6 +178,60 @@ def profile(tenant_id):
     tenant_to_show = mongo.db.tenants.find_one({"_id": ObjectId(tenant_id)})
 
     return render_template("profile.html", tenant=tenant_to_show)
+
+@app.route("/edit/<tenant_id>", methods=["GET", "POST"])
+def edit(tenant_id):
+    """Shows the edit profile page and accepts a POST request with edited data."""
+    if request.method == "POST":
+        updated_tenant = {
+            "user_first_name": request.form.get("user_first_name"),
+            "user_middle_initial": request.form.get("user_middle_initial"),
+            "user_last_name": request.form.get("user_last_name"),
+            "user_birthday": request.form.get("user_birthday"),
+            "user_age": request.form.get("user_age"),
+            "user_email": request.form.get("user_email"),
+            "user_phone_num": request.form.get("user_phone_num"),
+            "current_employer": request.form.get("current_employer"),
+            "employer_address": request.form.get("employer_address"),
+            "hm_first_name_1": request.form.get("hm_first_name_1"),
+            "hm_m_initial_1": request.form.get("hm_m_initial_1"),
+            "hm_last_name_1": request.form.get("hm_last_name_1"),
+            "hm_birthday_1": request.form.get("hm_birthday_1"),
+            "hm_age_1": request.form.get("hm_age_1"),
+            "hm_email_1": request.form.get("hm_email_1"),
+            "hm_phone_num_1": request.form.get("hm_phone_num_1"),
+            "hm_first_name_2": request.form.get("hm_first_name_2"),
+            "hm_m_initial_2": request.form.get("hm_m_initial_2"),
+            "hm_last_name_2": request.form.get("hm_last_name_2"),
+            "hm_birthday_2": request.form.get("hm_birthday_2"),
+            "hm_age_2": request.form.get("hm_age_2"),
+            "hm_email_2": request.form.get("hm_email_2"),
+            "hm_phone_num_2": request.form.get("hm_phone_num_2"),
+            "er_first_name_1": request.form.get("er_first_name_1"),
+            "er_m_initial_1": request.form.get("er_m_initial_1"),
+            "er_last_name_1": request.form.get("er_last_name_1"),
+            "er_relationship_1": request.form.get("er_relationship_1"),
+            "er_email_1": request.form.get("er_email_1"),
+            "er_phone_num_1": request.form.get("er_phone_num_1"),
+            "er_first_name_2": request.form.get("er_first_name_2"),
+            "er_m_initial_2": request.form.get("er_m_initial_2"),
+            "er_last_name_2": request.form.get("er_last_name_2"),
+            "er_relationship_2": request.form.get("er_relationship_2"),
+            "er_email_2": request.form.get("er_email_2"),
+            "er_phone_num_2": request.form.get("er_phone_num_2")
+        }
+        # Update the tenant in the database
+        mongo.db.tenants.update_one(
+            { "_id": ObjectId(tenant_id) },
+            { "$set": updated_tenant }
+        )
+        return redirect(url_for("profile", tenant_id=tenant_id))
+    else:
+        # Retrieve the tenant to edit
+        tenant_to_show = mongo.db.tenants.find_one({"_id": ObjectId(tenant_id)})
+        return  render_template("edit_profile.html", tenant=tenant_to_show)
+
+        
 
 
 
