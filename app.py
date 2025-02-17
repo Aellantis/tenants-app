@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
+from werkzeug.security import check_password_hash
 from pymongo import MongoClient
 # from models.logic import logic_function
 from dotenv import load_dotenv
@@ -133,6 +134,35 @@ def home():
 @app.route("/profile")
 def profile():
     return render_template("profile.html")
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+
+        if not email:
+            flash("Please enter your email.", "danger")
+            return redirect(url_for("login"))
+
+        if not password:
+            flash("Please enter your password.", "danger")
+            return redirect(url_for("login"))
+
+        tenant = tenants_collection.find_one({"email": email})
+
+        if tenant and check_password_hash(tenant["password"], password):
+            session["tenant_id"] = str(tenant["_id"])
+            session["tenant_name"] = tenant["name"]
+            session["tenant_email"] = tenant["email"]
+            session["unit_number"] = tenant["unit_number"]
+            flash("Login successful!", "success")
+            return redirect(url_for("profile"))
+        else:
+            flash("Invalid email or password.", "danger")
+
+    return render_template("login.html")
 
 
 @app.route("/delete/<id>", methods=["POST"])
