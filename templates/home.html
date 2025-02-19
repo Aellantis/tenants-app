@@ -1,0 +1,96 @@
+{% extends "index.html" %}
+
+{% block content %}
+<!--BODY STARTS HERE-->
+
+<!-- NAVIGATION-->
+<div class="card">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs mx-1">
+      <li class="nav-item">
+        <a class="nav-link active" href="#">Dashboard</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Payments</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Maintenance Request</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!--PAYMENTS OVERVIEW-->
+<div class="card-body">
+  <div class ="card-header">
+      <h5 class="card-title mx-3 mt-3">Payments Overview:</h5>
+     <div class="row">
+        <hr>
+          <div class="col-md-3 mx-3 mt-1">
+              <p class="card-text">Upcoming Payments Due:</p>
+              <h5>$1873.23</h5>
+          </div>
+          <div class="col-md-3 mx-3 mt-1">
+              <p class="card-text">Scheduled Payments:</p>
+              <h5>$1873.23</h5>
+          </div>
+      </div>
+      <a href="#" class="btn btn-primary mt-5 mb-3 mx-3 col-md-4">Go to Payments</a>
+  </div>
+</div>
+
+<!--WEEKLY INFO-->
+<div class="card-body">
+  <div class ="card-header">
+    <h5 class="card-title mx-3 mt-3">Important Weekly Information</h5>
+    <div class="row">
+      <hr>
+        <div class="col-md-3 mx-3 mt-1 mb-3">
+            <p class="card-text"><u>Trash & Recycle Pick-up</u></p>
+            <h6><strong>Monday:</strong> Trash Pick Up</h6>
+            <h6><strong>Wednesday:</strong> Recycling Pick Up</h6>
+            <small>*If these day's correspond with Holidays, pickup may occur the following day.*</small>
+        </div>
+        <div class="col-md-4 mx-3 mt-1 mb-3">
+            <p class="card-text"><u>Street Cleaning</u></p>
+            <h6><strong>Tuesday:</strong> 10:00 AM - 11:30 AM</h6>
+            <h6><strong>Thursday</strong> 10:00 AM - 12:00 PM</h6>
+            <small>*Please move your cars accordingly to avoid being towed on these days.*</small>
+        </div>
+    </div>
+  </div>
+</div>
+
+<!--CONTACT-->
+<div class="card-body">
+  <div class ="card-header">
+    <h5 class="card-title mx-3 mt-3">Contact Information</h5>
+    <div class="row">
+      <hr>
+      <div class="col-md-4 mx-3 mt-1 mb-3">
+        <p class="card-text"><u>Leasing Office</u></p>
+        <h6><strong>Front Desk:</strong> (123) 456-7890</h6>
+        <h6><strong>Maintenance:</strong> (123) 456-7890</h6>
+        <small>*We are available 24 hours. You may also reach us at front-desk@leaseoffice.com*</small>
+    </div>
+        <div class="col-md-3 mx-3 mt-1 mb-3">
+            <p class="card-text"><u>Trash & Recycle</u></p>
+            <h6><strong>Trash Company </strong> (123) 456-7890</h6>
+            <h6><strong>Recyling Company</strong> (123) 456-7890</h6>
+        </div>
+        <div class="col-md-4 mx-3 mt-1 mb-3">
+            <p class="card-text"><u>Towing Company</u></p>
+            <h6><strong>Towing Truckers</strong> (123) 456-7890</h6>
+        </div>
+    </div>
+    <form class="p-3 col-md-7">
+      <div class="mb-3">
+          <label for="issueDescription" class="form-label">Report an Issue/Concern</label>
+          <textarea class="form-control" id="issueDescription" rows="4" placeholder="Please Describe your issue(s) or concern(s)"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary col-md-2">Submit</button>
+  </form>
+  </div>
+</div>
+</div>
+{% endblock %}
