@@ -14,14 +14,14 @@
 <body>
    <!-- NAVBAR-->
    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand mx-4" href="#">Tenants App</a>
+    <a class="navbar-brand mx-4" href="/">Tenants App</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto me-4">
         <li class="nav-item active">
-          <a class="nav-link" href="#">Home <span class="sr-only"></span></a>
+          <a class="nav-link" href="/">Home <span class="sr-only"></span></a>
         </li>
         <li class="nav-item">
           {% if session.get("tenant_id") %}
@@ -29,6 +29,7 @@
           {% else %}
           <a class="nav-link" href="{{ url_for('create') }}">Profile</a>
           {% endif %}
+          <a class="nav-link" href="profile">Profile</a>
         </li>
       </ul>
     </div>
