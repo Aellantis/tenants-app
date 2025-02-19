@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
-from werkzeug.security import check_password_hash
+from flask_pymongo import PyMongo
 from pymongo import MongoClient
 # from models.logic import logic_function
 from dotenv import load_dotenv
@@ -14,6 +14,8 @@ app.secret_key = os.getenv("SECRET_KEY")
 # Database setup
 client = MongoClient("mongodb://localhost:27017/")
 db = client.tenant_app
+app.config["MONGO_URI"] = "mongodb://localhost:27017/tenant_app"
+mongo = PyMongo(app)
 
 # Collections
 tenants_collection = db.tenants
@@ -125,55 +127,137 @@ def payment():
 
     return render_template("payment.html")
 
-
-@app.route("/home")
-def home():
-    pass
-
-
 @app.route("/profile")
 def profile():
+    """Display tenant Profile page"""
     return render_template("profile.html")
 
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
+@app.route("/create", methods=["GET", "POST"])
+def create():
+    """Display the tenant form page & process data from the creation form."""
     if request.method == "POST":
-        email = request.form.get("email")
-        password = request.form.get("password")
+        new_tenant = {
+            "user_first_name": request.form.get("user_first_name"),
+            "user_middle_initial": request.form.get("user_middle_initial"),
+            "user_last_name": request.form.get("user_last_name"),
+            "user_birthday": request.form.get("user_birthday"),
+            "user_age": request.form.get("user_age"),
+            "user_email": request.form.get("user_email"),
+            "user_phone_num": request.form.get("user_phone_num"),
+            "current_employer": request.form.get("current_employer"),
+            "employer_address": request.form.get("employer_address"),
+            "hm_first_name_1": request.form.get("hm_first_name_1"),
+            "hm_m_initial_1": request.form.get("hm_m_initial_1"),
+            "hm_last_name_1": request.form.get("hm_last_name_1"),
+            "hm_birthday_1": request.form.get("hm_birthday_1"),
+            "hm_age_1": request.form.get("hm_age_1"),
+            "hm_email_1": request.form.get("hm_email_1"),
+            "hm_phone_num_1": request.form.get("hm_phone_num_1"),
+            "hm_first_name_2": request.form.get("hm_first_name_2"),
+            "hm_m_initial_2": request.form.get("hm_m_initial_2"),
+            "hm_last_name_2": request.form.get("hm_last_name_2"),
+            "hm_birthday_2": request.form.get("hm_birthday_2"),
+            "hm_age_2": request.form.get("hm_age_2"),
+            "hm_email_2": request.form.get("hm_email_2"),
+            "hm_phone_num_2": request.form.get("hm_phone_num_2"),
+            "er_first_name_1": request.form.get("er_first_name_1"),
+            "er_m_initial_1": request.form.get("er_m_initial_1"),
+            "er_last_name_1": request.form.get("er_last_name_1"),
+            "er_relationship_1": request.form.get("er_relationship_1"),
+            "er_email_1": request.form.get("er_email_1"),
+            "er_phone_num_1": request.form.get("er_phone_num_1"),
+            "er_first_name_2": request.form.get("er_first_name_2"),
+            "er_m_initial_2": request.form.get("er_m_initial_2"),
+            "er_last_name_2": request.form.get("er_last_name_2"),
+            "er_relationship_2": request.form.get("er_relationship_2"),
+            "er_email_2": request.form.get("er_email_2"),
+            "er_phone_num_2": request.form.get("er_phone_num_2"),
+            "profile_created": True # Flag to indicate profile creation
+        }
+        tenant_insert = mongo.db.tenants.insert_one(new_tenant).inserted_id
 
-        if not email:
-            flash("Please enter your email.", "danger")
-            return redirect(url_for("login"))
+        # Store tenant ID in session (assuming a logged-in user flow)
+        session["tenant_id"] = str(tenant_insert)
 
-        if not password:
-            flash("Please enter your password.", "danger")
-            return redirect(url_for("login"))
+        return redirect(url_for("detail", tenant_id=tenant_insert)) 
+    
+    return render_template("create_tenant.html")
 
-        tenant = tenants_collection.find_one({"email": email})
+@app.route("/tenant/<tenant_id>")
+def detail(tenant_id):
+    """Fetch and display tenant details."""
+    tenant_to_show = mongo.db.tenants.find_one({"_id": ObjectId(tenant_id)})
 
-        if tenant and check_password_hash(tenant["password"], password):
-            session["tenant_id"] = str(tenant["_id"])
-            session["tenant_name"] = tenant["name"]
-            session["tenant_email"] = tenant["email"]
-            session["unit_number"] = tenant["unit_number"]
-            flash("Login successful!", "success")
-            return redirect(url_for("profile"))
-        else:
-            flash("Invalid email or password.", "danger")
+    if tenant_to_show:
+        session["tenant_id"] = tenant_id # Store tenant_id in session
 
-    return render_template("login.html")
+    return render_template("detail_tenant.html", tenant=tenant_to_show)
 
+@app.route("/edit/<tenant_id>", methods=["GET", "POST"])
+def edit(tenant_id):
+    """Shows the edit profile page and accepts a POST request with edited data."""
+    if request.method == "POST":
+        updated_tenant = {
+            "user_first_name": request.form.get("user_first_name"),
+            "user_middle_initial": request.form.get("user_middle_initial"),
+            "user_last_name": request.form.get("user_last_name"),
+            "user_birthday": request.form.get("user_birthday"),
+            "user_age": request.form.get("user_age"),
+            "user_email": request.form.get("user_email"),
+            "user_phone_num": request.form.get("user_phone_num"),
+            "current_employer": request.form.get("current_employer"),
+            "employer_address": request.form.get("employer_address"),
+            "hm_first_name_1": request.form.get("hm_first_name_1"),
+            "hm_m_initial_1": request.form.get("hm_m_initial_1"),
+            "hm_last_name_1": request.form.get("hm_last_name_1"),
+            "hm_birthday_1": request.form.get("hm_birthday_1"),
+            "hm_age_1": request.form.get("hm_age_1"),
+            "hm_email_1": request.form.get("hm_email_1"),
+            "hm_phone_num_1": request.form.get("hm_phone_num_1"),
+            "hm_first_name_2": request.form.get("hm_first_name_2"),
+            "hm_m_initial_2": request.form.get("hm_m_initial_2"),
+            "hm_last_name_2": request.form.get("hm_last_name_2"),
+            "hm_birthday_2": request.form.get("hm_birthday_2"),
+            "hm_age_2": request.form.get("hm_age_2"),
+            "hm_email_2": request.form.get("hm_email_2"),
+            "hm_phone_num_2": request.form.get("hm_phone_num_2"),
+            "er_first_name_1": request.form.get("er_first_name_1"),
+            "er_m_initial_1": request.form.get("er_m_initial_1"),
+            "er_last_name_1": request.form.get("er_last_name_1"),
+            "er_relationship_1": request.form.get("er_relationship_1"),
+            "er_email_1": request.form.get("er_email_1"),
+            "er_phone_num_1": request.form.get("er_phone_num_1"),
+            "er_first_name_2": request.form.get("er_first_name_2"),
+            "er_m_initial_2": request.form.get("er_m_initial_2"),
+            "er_last_name_2": request.form.get("er_last_name_2"),
+            "er_relationship_2": request.form.get("er_relationship_2"),
+            "er_email_2": request.form.get("er_email_2"),
+            "er_phone_num_2": request.form.get("er_phone_num_2"),
+            "profile_created": True # Ensure the profile is marked as created
+        }
+        # Update the tenant in the database
+        mongo.db.tenants.update_one(
+            { "_id": ObjectId(tenant_id) },
+            { "$set": updated_tenant }
+        )
+        # Ensure the session is updated with the tenant ID
+        session["tenant_id"] = tenant_id
+        
+        return redirect(url_for("detail", tenant_id=tenant_id))
+    else:
+        # Retrieve the tenant to edit
+        tenant_to_show = mongo.db.tenants.find_one({"_id": ObjectId(tenant_id)})
 
-@app.route("/delete/<id>", methods=["POST"])
-def delete(_id):
-    pass
+        if tenant_to_show:
+            session["tenant_id"] = tenant_id # Store tenant_id in session
 
+        return  render_template("edit_profile.html", tenant=tenant_to_show)
 
-@app.route("/something/<_id>", methods=["GET"])
-def another_func(_id):
-    pass
+@app.route("/delete/<tenant_id>", methods=["POST"])
+def delete(tenant_id):
+    mongo.db.tenants.delete_one({"_id": ObjectId(tenant_id)})
+    return redirect(url_for("profile"))
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5001)
