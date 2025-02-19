@@ -1,0 +1,14 @@
+#home-body{
+  background-color: #A3CADB;
+}
+#home-cards {
+  background-color: #f8f9fa;
+}
+#home-buttons {
+  background-color: #100077;
+  color: white;
+}
+body {
+font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+font-weight: 600;
+}
