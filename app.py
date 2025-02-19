@@ -127,6 +127,11 @@ def payment():
 
     return render_template("payment.html")
 
+@app.route("/profile")
+def profile():
+    """Display tenant Profile page"""
+    return render_template("profile.html")
+
 @app.route("/create", methods=["GET", "POST"])
 def create():
     """Display the tenant form page & process data from the creation form."""
@@ -166,18 +171,27 @@ def create():
             "er_last_name_2": request.form.get("er_last_name_2"),
             "er_relationship_2": request.form.get("er_relationship_2"),
             "er_email_2": request.form.get("er_email_2"),
-            "er_phone_num_2": request.form.get("er_phone_num_2")
+            "er_phone_num_2": request.form.get("er_phone_num_2"),
+            "profile_created": True # Flag to indicate profile creation
         }
         tenant_insert = mongo.db.tenants.insert_one(new_tenant).inserted_id
-        return redirect(url_for("profile", tenant_id=tenant_insert)) 
+
+        # Store tenant ID in session (assuming a logged-in user flow)
+        session["tenant_id"] = str(tenant_insert)
+
+        return redirect(url_for("detail", tenant_id=tenant_insert)) 
+    
     return render_template("create_tenant.html")
 
 @app.route("/tenant/<tenant_id>")
-def profile(tenant_id):
+def detail(tenant_id):
     """Fetch and display tenant details."""
     tenant_to_show = mongo.db.tenants.find_one({"_id": ObjectId(tenant_id)})
 
-    return render_template("profile.html", tenant=tenant_to_show)
+    if tenant_to_show:
+        session["tenant_id"] = tenant_id # Store tenant_id in session
+
+    return render_template("detail_tenant.html", tenant=tenant_to_show)
 
 @app.route("/edit/<tenant_id>", methods=["GET", "POST"])
 def edit(tenant_id):
@@ -218,22 +232,32 @@ def edit(tenant_id):
             "er_last_name_2": request.form.get("er_last_name_2"),
             "er_relationship_2": request.form.get("er_relationship_2"),
             "er_email_2": request.form.get("er_email_2"),
-            "er_phone_num_2": request.form.get("er_phone_num_2")
+            "er_phone_num_2": request.form.get("er_phone_num_2"),
+            "profile_created": True # Ensure the profile is marked as created
         }
         # Update the tenant in the database
         mongo.db.tenants.update_one(
             { "_id": ObjectId(tenant_id) },
             { "$set": updated_tenant }
         )
-        return redirect(url_for("profile", tenant_id=tenant_id))
+        # Ensure the session is updated with the tenant ID
+        session["tenant_id"] = tenant_id
+        
+        return redirect(url_for("detail", tenant_id=tenant_id))
     else:
         # Retrieve the tenant to edit
         tenant_to_show = mongo.db.tenants.find_one({"_id": ObjectId(tenant_id)})
+
+        if tenant_to_show:
+            session["tenant_id"] = tenant_id # Store tenant_id in session
+
         return  render_template("edit_profile.html", tenant=tenant_to_show)
 
-        
-
+@app.route("/delete/<tenant_id>", methods=["POST"])
+def delete(tenant_id):
+    mongo.db.tenants.delete_one({"_id": ObjectId(tenant_id)})
+    return redirect(url_for("profile"))
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5001)
