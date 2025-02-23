@@ -82,6 +82,10 @@ def index():
     if "tenant_id" in session:
         tenant = mongo.db.tenants.find_one({"_id": ObjectId(session["tenant_id"])})
     return render_template("home.html", tenant=tenant)
+    tenant = None
+    if "tenant_id" in session:
+        tenant = mongo.db.tenants.find_one({"_id": ObjectId(session["tenant_id"])})
+    return render_template("home.html", tenant=tenant)
 
 
 @app.route("/payment", methods=["GET", "POST"])
@@ -135,6 +139,19 @@ def payment():
     return render_template("payment.html")
 
 
+@app.route("/profile")
+def profile():
+    """Redirect user to the correct profile page or show the create page."""
+    tenant_id = session.get("tenant_id")
+
+    if tenant_id:
+        tenant = mongo.db.tenants.find_one({"_id": ObjectId(tenant_id)})
+        if tenant:
+            return redirect(url_for("detail", tenant_id=tenant_id))
+        else:
+            session.pop("tenant_id", None) # Remove invalid tenant_id from session
+    
+    return render_template("profile.html")
 
 
 @app.route("/create", methods=["GET", "POST"])
@@ -264,6 +281,15 @@ def edit(tenant_id):
 
 @app.route("/delete/<tenant_id>", methods=["POST"])
 def delete(tenant_id):
+    """Delete tenant and clear session only if the tenant exists."""
+    tenant = mongo.db.tenants.find_one({"_id": ObjectId(tenant_id)})
+
+    # Remove tenant_id from session
+    if tenant:
+        mongo.db.tenants.delete_one({"_id": ObjectId(tenant_id)})
+        session.pop("tenant_id", None)
+
+    return redirect(url_for("create"))
     """Delete tenant and clear session only if the tenant exists."""
     tenant = mongo.db.tenants.find_one({"_id": ObjectId(tenant_id)})
 
