@@ -134,6 +134,7 @@ def payment():
     return render_template("payment.html")
 
 
+
 @app.route("/create", methods=["GET", "POST"])
 def create():
     """Display the tenant form page & process data from the creation form."""
