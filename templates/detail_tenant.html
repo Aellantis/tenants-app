@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="container mt-4">
-    <form action="/detail" method="POST" class="row g-4">
+    <!-- <form action="/detail" method="POST" class="row g-4"> -->
         <!-- Left Side: Username & Employer Info -->
         <div class="col-md-4">
                 <div class="p-3">
@@ -79,11 +79,19 @@
                 </div>
             </div>
         </div>
+        <!-- Edit Profile Link -->
 		<a href="/edit/{{ tenant['_id'] }}">Edit Profile</a>
-    </form>
+    <!-- </form> -->
 	<form action="/delete/{{ tenant['_id'] }}" method="POST" onsubmit="return confirm_delete()">
-		<input type="submit" onclick="delete_modal()" value="Delete Profile">
+		<button type="submit" class="btn btn-danger mt-3">Delete Profile</button>
 	</form>
 </div>
+
+<!-- JavaScript Confirmation -->
+ <script>
+    function confirm_delete() {
+        return confirm("Are you sure you want to delete your profile? This action cannot be undone.")
+    }
+ </script>
 
 {% endblock %}
