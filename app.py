@@ -77,7 +77,10 @@ transactions_collection = db.transactions
 
 @app.route("/")
 def index():
-    return render_template("home.html")
+    tenant = None
+    if "tenant_id" in session:
+        tenant = mongo.db.tenants.find_one({"_id": ObjectId(session["tenant_id"])})
+    return render_template("home.html", tenant=tenant)
 
 
 @app.route("/payment", methods=["GET", "POST"])
@@ -133,7 +136,16 @@ def payment():
 
 @app.route("/profile")
 def profile():
-    """Display tenant Profile page"""
+    """Redirect user to the correct profile page or show the create page."""
+    tenant_id = session.get("tenant_id")
+
+    if tenant_id:
+        tenant = mongo.db.tenants.find_one({"_id": ObjectId(tenant_id)})
+        if tenant:
+            return redirect(url_for("detail", tenant_id=tenant_id))
+        else:
+            session.pop("tenant_id", None) # Remove invalid tenant_id from session
+    
     return render_template("profile.html")
 
 
@@ -264,8 +276,15 @@ def edit(tenant_id):
 
 @app.route("/delete/<tenant_id>", methods=["POST"])
 def delete(tenant_id):
-    mongo.db.tenants.delete_one({"_id": ObjectId(tenant_id)})
-    return redirect(url_for("profile"))
+    """Delete tenant and clear session only if the tenant exists."""
+    tenant = mongo.db.tenants.find_one({"_id": ObjectId(tenant_id)})
+
+    # Remove tenant_id from session
+    if tenant:
+        mongo.db.tenants.delete_one({"_id": ObjectId(tenant_id)})
+        session.pop("tenant_id", None)
+
+    return redirect(url_for("create"))
 
 
 @app.route("/login", methods=["GET", "POST"])

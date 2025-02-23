@@ -25,9 +25,13 @@
         </li>
         <li class="nav-item">
           {% if session.get("tenant_id") %}
-          <a class="nav-link" href="{{ url_for('detail', tenant_id=session['tenant_id']) }}">Profile</a>
+            {% if tenant %}
+              <a class="nav-link" href="{{ url_for('detail', tenant_id=session['tenant_id']) }}">Profile</a>
+            {% else %}
+              <a class="nav-link" href="{{ url_for('create') }}"> Create Profile</a>
+            {% endif %}
           {% else %}
-          <a class="nav-link" href="{{ url_for('create') }}">Profile</a>
+            <a class="nav-link" href="{{ url_for('create') }}"> Create Profile</a>
           {% endif %}
         </li>
       </ul>
