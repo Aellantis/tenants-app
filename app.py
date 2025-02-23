@@ -139,21 +139,6 @@ def payment():
     return render_template("payment.html")
 
 
-@app.route("/profile")
-def profile():
-    """Redirect user to the correct profile page or show the create page."""
-    tenant_id = session.get("tenant_id")
-
-    if tenant_id:
-        tenant = mongo.db.tenants.find_one({"_id": ObjectId(tenant_id)})
-        if tenant:
-            return redirect(url_for("detail", tenant_id=tenant_id))
-        else:
-            session.pop("tenant_id", None) # Remove invalid tenant_id from session
-    
-    return render_template("profile.html")
-
-
 @app.route("/create", methods=["GET", "POST"])
 def create():
     """Display the tenant form page & process data from the creation form."""
