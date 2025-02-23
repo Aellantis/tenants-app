@@ -1,3 +1,5 @@
+from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_pymongo import PyMongo
 from pymongo import MongoClient
@@ -5,6 +7,7 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
 from bson.objectid import ObjectId
+import secrets  # To generate secure reset tokens
 
 load_dotenv()
 
@@ -127,10 +130,12 @@ def payment():
 
     return render_template("payment.html")
 
+
 @app.route("/profile")
 def profile():
     """Display tenant Profile page"""
     return render_template("profile.html")
+
 
 @app.route("/create", methods=["GET", "POST"])
 def create():
@@ -172,16 +177,17 @@ def create():
             "er_relationship_2": request.form.get("er_relationship_2"),
             "er_email_2": request.form.get("er_email_2"),
             "er_phone_num_2": request.form.get("er_phone_num_2"),
-            "profile_created": True # Flag to indicate profile creation
+            "profile_created": True  # Flag to indicate profile creation
         }
         tenant_insert = mongo.db.tenants.insert_one(new_tenant).inserted_id
 
         # Store tenant ID in session (assuming a logged-in user flow)
         session["tenant_id"] = str(tenant_insert)
 
-        return redirect(url_for("detail", tenant_id=tenant_insert)) 
-    
+        return redirect(url_for("detail", tenant_id=tenant_insert))
+
     return render_template("create_tenant.html")
+
 
 @app.route("/tenant/<tenant_id>")
 def detail(tenant_id):
@@ -189,9 +195,10 @@ def detail(tenant_id):
     tenant_to_show = mongo.db.tenants.find_one({"_id": ObjectId(tenant_id)})
 
     if tenant_to_show:
-        session["tenant_id"] = tenant_id # Store tenant_id in session
+        session["tenant_id"] = tenant_id  # Store tenant_id in session
 
     return render_template("detail_tenant.html", tenant=tenant_to_show)
+
 
 @app.route("/edit/<tenant_id>", methods=["GET", "POST"])
 def edit(tenant_id):
@@ -233,30 +240,122 @@ def edit(tenant_id):
             "er_relationship_2": request.form.get("er_relationship_2"),
             "er_email_2": request.form.get("er_email_2"),
             "er_phone_num_2": request.form.get("er_phone_num_2"),
-            "profile_created": True # Ensure the profile is marked as created
+            "profile_created": True  # Ensure the profile is marked as created
         }
         # Update the tenant in the database
         mongo.db.tenants.update_one(
-            { "_id": ObjectId(tenant_id) },
-            { "$set": updated_tenant }
+            {"_id": ObjectId(tenant_id)},
+            {"$set": updated_tenant}
         )
         # Ensure the session is updated with the tenant ID
         session["tenant_id"] = tenant_id
-        
+
         return redirect(url_for("detail", tenant_id=tenant_id))
     else:
         # Retrieve the tenant to edit
-        tenant_to_show = mongo.db.tenants.find_one({"_id": ObjectId(tenant_id)})
+        tenant_to_show = mongo.db.tenants.find_one(
+            {"_id": ObjectId(tenant_id)})
 
         if tenant_to_show:
-            session["tenant_id"] = tenant_id # Store tenant_id in session
+            session["tenant_id"] = tenant_id  # Store tenant_id in session
 
-        return  render_template("edit_profile.html", tenant=tenant_to_show)
+        return render_template("edit_profile.html", tenant=tenant_to_show)
+
 
 @app.route("/delete/<tenant_id>", methods=["POST"])
 def delete(tenant_id):
     mongo.db.tenants.delete_one({"_id": ObjectId(tenant_id)})
     return redirect(url_for("profile"))
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+
+        if not email:
+            flash("Please enter your email.", "danger")
+            return redirect(url_for("login"))
+
+        if not password:
+            flash("Please enter your password.", "danger")
+            return redirect(url_for("login"))
+
+        tenant = tenants_collection.find_one({"email": email})
+
+        if tenant and check_password_hash(tenant["password"], password):
+            session["tenant_id"] = str(tenant["_id"])
+            session["tenant_name"] = tenant["name"]
+            session["tenant_email"] = tenant["email"]
+            session["unit_number"] = tenant["unit_number"]
+            flash("Login successful!", "success")
+            return redirect(url_for("profile"))
+        else:
+            flash("Invalid email or password.", "danger")
+
+    return render_template("login.html")
+
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        name = request.form.get("name")
+        email = request.form.get("email")
+        password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
+
+        # Check if passwords match
+        if password != confirm_password:
+            flash("Passwords do not match", "danger")
+            return redirect(url_for("register"))
+
+        # Check if email already exists
+        existing_user = mongo.db.tenants.find_one({"email": email})
+        if existing_user:
+            flash("Email already registered", "danger")
+            return redirect(url_for("register"))
+
+        # Hash the password before saving
+        hashed_password = generate_password_hash(password)
+
+        # Save user to the database
+        user_data = {
+            "name": name,
+            "email": email,
+            "password": hashed_password,
+        }
+        mongo.db.tenants.insert_one(user_data)
+
+        flash("Registration successful! You can now log in.", "success")
+        return redirect(url_for("login"))
+
+    return render_template("register.html")
+
+
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        user = tenants_collection.find_one({"email": email})
+
+        if user:
+            # Generate a secure token (in a real app, store it in DB and email it)
+            reset_token = secrets.token_urlsafe(16)
+            tenants_collection.update_one(
+                {"email": email},
+                {"$set": {"reset_token": reset_token}}
+            )
+
+            # TODO: Send an email with the reset token (placeholder)
+            flash(
+                f"A password reset link has been sent to {email}.", "success")
+        else:
+            flash("Email not found. Please try again.", "danger")
+
+        return redirect(url_for('forgot_password'))
+
+    return render_template('forgot_password.html')
 
 
 if __name__ == "__main__":
