@@ -24,6 +24,7 @@ mongo = PyMongo(app)
 tenants_collection = db.tenants
 payments_collection = db.payments
 transactions_collection = db.transactions
+maintenance_collection = db.maintenance_requests
 
 # Example Schema:
 
@@ -299,6 +300,42 @@ def login():
             flash("Invalid email or password.", "danger")
 
     return render_template("login.html")
+
+@app.route('/maintenance', methods=['GET', 'POST'])
+def maintenance():
+    if request.method == 'POST':
+        # Extract form data
+        reason = request.form.get('reason')
+        other_reason = request.form.get('other_reason')
+        priority = request.form.get('priority')
+        additional = request.form.get('additional')
+        schedule_date = request.form.get('schedule_date')
+        schedule_time = request.form.get('schedule_time')
+        entry_when_no_one_home = request.form.get('entry_when_no_one_home')
+        pets_present = request.form.get('pets_present')
+
+        if reason == "Others" and other_reason:
+            reason = other_reason
+
+        # Construct the maintenance request document.
+        maintenance_request = {
+            "reason": reason,
+            "priority": priority,
+            "additional": additional,
+            "schedule_date": schedule_date,
+            "schedule_time": schedule_time,
+            "entry_when_no_one_home": entry_when_no_one_home,
+            "pets_present": pets_present
+        }
+
+        # Save to the maintenance collection.
+        maintenance_collection.insert_one(maintenance_request)
+        flash("Maintenance request submitted successfully.", "success")
+        return redirect(url_for('maintenance'))
+
+    # For GET requests, render the maintenance page.
+    return render_template('maintenance.html')
+
 
 
 @app.route("/register", methods=["GET", "POST"])
