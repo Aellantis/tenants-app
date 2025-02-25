@@ -4,11 +4,25 @@
 #home-cards {
   background-color: #f8f9fa;
 }
-#home-buttons {
+#home-button {
   background-color: #100077;
   color: white;
 }
 body {
 font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 font-weight: 600;
+}
+#user {
+  width: 15rem;
+  background-color: rgb(254, 255, 228);
+  color: black;
+  font-size: small;
+  margin-bottom: 0.5rem;
+}
+#contact{
+  margin-left: 1rem;
+  font-size: small;
+}
+#payment{
+  font-size: larger;
 }
