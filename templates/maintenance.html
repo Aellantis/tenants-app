@@ -4,76 +4,78 @@
 
 {% block content %}
 <div class="container mt-4">
-    <div class="row">
-        <div class="col-md-6">
-            <h4>Maintenance Request</h4>
-            <label for="reason" class="form-label">Reason:</label>
-            <select id="reason" class="form-select mb-3" onchange="toggleOtherReason()">
-                <option>Water Leak</option>
-                <option>No Electricity</option>
-                <option>Others</option>
-            </select>
-            <input type="text" id="other-reason" class="form-control mb-3" placeholder="Specify other reason" style="display:none;">
+    <form method="POST" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Maintenance Request</h4>
+                <label for="reason" class="form-label">Reason:</label>
+                <select id="reason" name="reason" class="form-select mb-3" onchange="toggleOtherReason()">
+                    <option>Water Leak</option>
+                    <option>No Electricity</option>
+                    <option>Others</option>
+                </select>
+                <input type="text" id="other-reason" name="other_reason" class="form-control mb-3" placeholder="Specify other reason" style="display:none;">
+                
+                <label class="form-label">Upload Images:</label>
+                <input type="file" name="image_upload" class="form-control mb-3">
+                
+                <label class="form-label">Entry when no one home:</label>
+                <select class="form-select mb-3" name="entry_when_no_one_home">
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+                
+                <label class="form-label">Pets present:</label>
+                <select class="form-select mb-3" name="pets_present">
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+                
+                <label for="priority" class="form-label">Priority Level:</label>
+                <select id="priority" name="priority" class="form-select mb-3">
+                    <option>Urgent (Gas Leak / Electricity)</option>
+                    <option>Important (Faucet Leak)</option>
+                    <option>Not Priority (Hard Closing Window)</option>
+                </select>
+                
+                <label for="additional" class="form-label">Additional Information:</label>
+                <textarea id="additional" name="additional" class="form-control" rows="3"></textarea>
+                
+                <h4>Schedule</h4>
+                <label class="form-label">Date:</label>
+                <input type="date" id="schedule-date" name="schedule_date" class="form-control mb-3">
+                <label class="form-label">Time:</label>
+                <input type="time" id="schedule-time" name="schedule_time" class="form-control mb-3" value="08:00">
+                
+                <button type="submit" class="btn btn-primary mt-3">Submit Request</button>
+            </div>
             
-            <label class="form-label">Upload Images:</label>
-            <input type="file" class="form-control mb-3">
-            
-            <label class="form-label">Entry when no one home:</label>
-            <select class="form-select mb-3">
-                <option>Yes</option>
-                <option>No</option>
-            </select>
-            
-            <label class="form-label">Pets present:</label>
-            <select class="form-select mb-3">
-                <option>Yes</option>
-                <option>No</option>
-            </select>
-            
-            <label for="priority" class="form-label">Priority Level:</label>
-            <select id="priority" class="form-select mb-3">
-                <option>Urgent (Gas Leak / Electricity)</option>
-                <option>Important (Faucet Leak)</option>
-                <option>Not Priority (Hard Closing Window)</option>
-            </select>
-            
-            <label for="additional" class="form-label">Additional Information:</label>
-            <textarea id="additional" class="form-control" rows="3"></textarea>
-            
-            <h4>Schedule</h4>
-            <label class="form-label">Date:</label>
-            <input type="date" id="schedule-date" class="form-control mb-3">
-            <label class="form-label">Time:</label>
-            <input type="time" id="schedule-time" class="form-control mb-3" value="08:00">
-            
-            <button class="btn btn-primary mt-3" onclick="submitRequest()">Submit Request</button>
+            <div class="col-md-6">
+                <h4>Requests</h4>
+                <ul id="request-list" class="list-group mb-3"></ul>
+                
+                <h4>Feedback</h4>
+                <label class="form-label">Select Issue:</label>
+                <select id="feedback-issues" class="form-select mb-3"></select>
+                <label class="form-label">Was your maintenance request resolved?</label>
+                <select class="form-select mb-3">
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+                
+                <label class="form-label">Did it solve in a timely manner?</label>
+                <select class="form-select mb-3">
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+                
+                <label class="form-label">Additional Feedback:</label>
+                <textarea class="form-control mb-3" rows="3" placeholder="Provide any additional feedback"></textarea>
+                
+                <button class="btn btn-primary" type="button">Submit Feedback</button>
+            </div>
         </div>
-        
-        <div class="col-md-6">
-            <h4>Requests</h4>
-            <ul id="request-list" class="list-group mb-3"></ul>
-            
-            <h4>Feedback</h4>
-            <label class="form-label">Select Issue:</label>
-            <select id="feedback-issues" class="form-select mb-3"></select>
-            <label class="form-label">Was your maintenance request resolved?</label>
-            <select class="form-select mb-3">
-                <option>Yes</option>
-                <option>No</option>
-            </select>
-            
-            <label class="form-label">Did it solve in a timely manner?</label>
-            <select class="form-select mb-3">
-                <option>Yes</option>
-                <option>No</option>
-            </select>
-            
-            <label class="form-label">Additional Feedback:</label>
-            <textarea class="form-control mb-3" rows="3" placeholder="Provide any additional feedback"></textarea>
-            
-            <button class="btn btn-primary">Submit Feedback</button>
-        </div>
-    </div>
+    </form>
 </div>
 {% endblock %}
 
@@ -85,7 +87,10 @@
         otherReasonInput.style.display = reasonSelect.value === "Others" ? "block" : "none";
     }
     
+    // If you want to keep the client-side dynamic list functionality for requests,
+    // you can keep these functions. Just note that the form submission now saves the data.
     function submitRequest() {
+        // This function may now be optional if you're submitting the entire form.
         let reason = document.getElementById("reason").value;
         if (reason === "Others") {
             reason = document.getElementById("other-reason").value;
