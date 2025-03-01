@@ -5,10 +5,10 @@
 
 <!-- NAVIGATION-->
 <div class="card">
-  <div class="card-header" id = "home-cards">
+  <div class="card-header" id="home-cards">
     <ul class="nav nav-tabs card-header-tabs mx-1">
       <li class="nav-item">
-        <a class="nav-link active" href="/">Dashboard</a>
+        <a class="nav-link active" href="{{ url_for('home') }}">Dashboard</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="{{ url_for('payment') }}">Payments</a>
@@ -24,66 +24,67 @@
 
 
 <!--PAYMENTS OVERVIEW-->
-<div class="card-body" id = "home-body">
-  <span class="badge" id = "user">Welcome, User LastName!</span>
-  <div class ="card-header" id = "home-cards">
-      <h5 class="card-title mx-3 mt-3">Payments Overview</h5>
-     <div class="row">
-        <hr>
-          <div class="col-md-3 mx-3 mt-1">
-              <p class="card-text">Upcoming Payments Due:</p>
-              <h5 id="payment">$1873.23</h5>
-          </div>
-          <div class="col-md-3 mx-3 mt-1">
-              <p class="card-text">Scheduled Payments:</p>
-              <h5 id = "payment">$1873.23</h5>
-          </div>
+<div class="card-body" id="home-body">
+  <span class="badge" id="user">Welcome, User LastName!</span>
+  <div class="card-header" id="home-cards">
+    <h5 class="card-title mx-3 mt-3">Payments Overview</h5>
+    <div class="row">
+      <hr>
+      <div class="col-md-3 mx-3 mt-1">
+        <p class="card-text">Upcoming Payments Due:</p>
+        <h5 id="payment">$1873.23</h5>
       </div>
-      <a href="{{ url_for('payment') }}" class="btn mt-5 mb-3 mx-3 col-md-4" id = "home-button">Go to Payments</a>
+      <div class="col-md-3 mx-3 mt-1">
+        <p class="card-text">Scheduled Payments:</p>
+        <h5 id="payment">$1873.23</h5>
+      </div>
+    </div>
+    <a href="{{ url_for('payment') }}" class="btn mt-5 mb-3 mx-3 col-md-4" id="home-button">Go to Payments</a>
   </div>
 </div>
 
 <!--MAINTENANCE SECTION-->
 <div class="card-body" id="home-body">
   <div class="card-header" id="home-cards">
-      <h5 class="card-title mx-3 mt-3">Maintenance Requests</h5>
-      <div class="row">
-          <hr>
-          <div class="col-md-3 mx-3 mt-1">
-              <p class="card-text">Scheduled Requests:</p>
-              <small>‣ Kitchen: Faucet Leak - 2:00 PM</small>
-          </div>
+    <h5 class="card-title mx-3 mt-3">Maintenance Requests</h5>
+    <div class="row">
+      <hr>
+      <div class="col-md-3 mx-3 mt-1">
+        <p class="card-text">Scheduled Requests:</p>
+        <small>‣ Kitchen: Faucet Leak - 2:00 PM</small>
       </div>
-      <a href="{{ url_for('maintenance') }}" class="btn mt-5 mb-3 mx-3 col-md-4" id="home-button">Submit a Maintenance Request</a>
+    </div>
+    <a href="{{ url_for('maintenance') }}" class="btn mt-5 mb-3 mx-3 col-md-4" id="home-button">Submit a Maintenance
+      Request</a>
   </div>
 </div>
 
 
 <!--WEEKLY INFO-->
-<div class="card-body" id = "home-body">
-  <div class ="card-header" id = "home-cards">
+<div class="card-body" id="home-body">
+  <div class="card-header" id="home-cards">
     <h5 class="card-title mx-3 mt-3">Important Weekly Information</h5>
     <div class="row">
       <hr>
-        <div class="col-md-3 mx-3 mt-1 mb-3">
-            <p class="card-text"><u>Trash & Recycle Pick-up</u></p>
-            <h6><strong>Monday:</strong> Trash Pick Up</h6>
-            <h6><strong>Wednesday:</strong> Recycling Pick Up</h6>
-            <small>*If these day's correspond with holidays, pickup may occur the following day.*</small>
-        </div>
-        <div class="col-md-4 mx-3 mt-1 mb-3">
-            <p class="card-text"><u>Street Cleaning</u></p>
-            <h6><strong>Tuesday:</strong> 10:00 AM - 11:30 AM</h6>
-            <h6><strong>Thursday</strong> 10:00 AM - 12:00 PM</h6>
-            <small>*Please move your cars accordingly to avoid being towed on these days.*</small>
-        </div>
+      <div class="col-md-3 mx-3 mt-1 mb-3">
+        <p class="card-text"><u>Trash & Recycle Pick-up</u></p>
+        <h6><strong>Monday:</strong> Trash Pick Up</h6>
+        <h6><strong>Wednesday:</strong> Recycling Pick Up</h6>
+        <small>*If these day's correspond with holidays, pickup may occur the following day.*</small>
+      </div>
+      <div class="col-md-4 mx-3 mt-1 mb-3">
+        <p class="card-text"><u>Street Cleaning</u></p>
+        <h6><strong>Tuesday:</strong> 10:00 AM - 11:30 AM</h6>
+        <h6><strong>Thursday</strong> 10:00 AM - 12:00 PM</h6>
+        <small>*Please move your cars accordingly to avoid being towed on these days.*</small>
+      </div>
     </div>
   </div>
 </div>
 
 <!--CONTACT-->
-<div class="card-body" id = "home-body">
-  <div class ="card-header" id = "home-cards">
+<div class="card-body" id="home-body">
+  <div class="card-header" id="home-cards">
     <h5 class="card-title mx-3 mt-3">Contact Information</h5>
     <div class="row">
       <hr>
@@ -94,26 +95,27 @@
         <small>*We are available 24 hours.*</small>
         <br>
         <small>*Maintenance requests can be made in the portal or phone.*</small>
-    </div>
-        <div class="col-md-3 mx-3 mt-1 mb-3">
-            <p class="card-text"><u>Trash & Recycle</u></p>
-            <h6><strong>Trash Company </strong> (123) 456-7890</h6>
-            <h6><strong>Recyling Company</strong> (123) 456-7890</h6>
-        </div>
-        <div class="col-md-4 mx-3 mt-1 mb-3">
-            <p class="card-text"><u>Towing Company</u></p>
-            <h6><strong>Towing Truckers</strong> (123) 456-7890</h6>
-        </div>
+      </div>
+      <div class="col-md-3 mx-3 mt-1 mb-3">
+        <p class="card-text"><u>Trash & Recycle</u></p>
+        <h6><strong>Trash Company </strong> (123) 456-7890</h6>
+        <h6><strong>Recyling Company</strong> (123) 456-7890</h6>
+      </div>
+      <div class="col-md-4 mx-3 mt-1 mb-3">
+        <p class="card-text"><u>Towing Company</u></p>
+        <h6><strong>Towing Truckers</strong> (123) 456-7890</h6>
+      </div>
     </div>
     <form class="p-3 col-md-7">
       <div class="mb-3">
-          <label for="issueDescription" class="form-label">Report an Issue/Concern</label>
-          <textarea class="form-control" id="issueDescription" rows="4" placeholder="Please describe your issue(s) or concern(s)."></textarea>
+        <label for="issueDescription" class="form-label">Report an Issue/Concern</label>
+        <textarea class="form-control" id="issueDescription" rows="4"
+          placeholder="Please describe your issue(s) or concern(s)."></textarea>
       </div>
-      <button type="submit" class="btn col-md-2" id = "home-button">Submit</button>
+      <button type="submit" class="btn col-md-2" id="home-button">Submit</button>
       <i id="contact">*You may also reach us at front-desk@leaseoffice.com*</i>
       <br>
-  </form>
+    </form>
   </div>
 </div>
 </div>
