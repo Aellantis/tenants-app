@@ -2,29 +2,29 @@ from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_pymongo import PyMongo
-from pymongo import MongoClient
+# from pymongo import MongoClient
 # from models.logic import logic_function
 from dotenv import load_dotenv
 import os
 from bson.objectid import ObjectId
 import secrets  # To generate secure reset tokens
 
+# Load environment variables from .env file
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
 
-# Database setup
-client = MongoClient("mongodb://localhost:27017/")
-db = client.tenant_app
-app.config["MONGO_URI"] = "mongodb://localhost:27017/tenant_app"
+# Configure MongoDB with Flask-PyMongo
+app.config["MONGO_URI"] = os.getenv(
+    "MONGO_URI", "mongodb://localhost:27017/tenant_app")
 mongo = PyMongo(app)
 
 # Collections
-tenants_collection = db.tenants
-payments_collection = db.payments
-transactions_collection = db.transactions
-maintenance_collection = db.maintenance_requests
+tenants_collection = mongo.db.tenants
+payments_collection = mongo.db.payments
+transactions_collection = mongo.db.transactions
+maintenance_collection = mongo.db.maintenance_requests
 
 # Example Schema:
 
@@ -78,9 +78,15 @@ maintenance_collection = db.maintenance_requests
 
 @app.route("/")
 def index():
+    return redirect(url_for("login"))
+
+
+@app.route("/home")
+def home():
     tenant = None
     if "tenant_id" in session:
-        tenant = mongo.db.tenants.find_one({"_id": ObjectId(session["tenant_id"])})
+        tenant = mongo.db.tenants_collection.find_one(
+            {"_id": ObjectId(session["tenant_id"])})
     return render_template("home.html", tenant=tenant)
 
 
@@ -89,7 +95,7 @@ def payment():
     if request.method == "POST":
         # Assuming tenant_id is stored in session
         tenant_id = request.form.get("tenant_id")
-        amount = float(request.form.get("amount"))
+        amount = request.form.get("amount")
         payment_method = request.form.get("payment_method")
         payment_date = request.form.get("payment_date")
         transaction_status = "pending"
@@ -112,7 +118,8 @@ def payment():
             "payment_date": payment_date,
             "status": "completed"
         }
-        payment_id = payments_collection.insert_one(payment_record).inserted_id
+        payment_id = mongo.db.payments_collection.insert_one(
+            payment_record).inserted_id
 
         transaction_record = {
             "tenant_id": ObjectId(tenant_id),
@@ -127,7 +134,7 @@ def payment():
                 "gateway": "Stripe"
             }
         }
-        transactions_collection.insert_one(transaction_record)
+        mongo.db.transactions_collection.insert_one(transaction_record)
 
         flash("Payment successfully recorded.", "success")
         return redirect(url_for("payment"))
@@ -177,7 +184,8 @@ def create():
             "er_phone_num_2": request.form.get("er_phone_num_2"),
             "profile_created": True  # Flag to indicate profile creation
         }
-        tenant_insert = mongo.db.tenants.insert_one(new_tenant).inserted_id
+        tenant_insert = mongo.db.tenants_collection.insert_one(
+            new_tenant).inserted_id
 
         # Store tenant ID in session (assuming a logged-in user flow)
         session["tenant_id"] = str(tenant_insert)
@@ -190,7 +198,8 @@ def create():
 @app.route("/tenant/<tenant_id>")
 def detail(tenant_id):
     """Fetch and display tenant details."""
-    tenant_to_show = mongo.db.tenants.find_one({"_id": ObjectId(tenant_id)})
+    tenant_to_show = mongo.db.tenants_collection.find_one(
+        {"_id": ObjectId(tenant_id)})
 
     if tenant_to_show:
         session["tenant_id"] = tenant_id  # Store tenant_id in session
@@ -241,7 +250,7 @@ def edit(tenant_id):
             "profile_created": True  # Ensure the profile is marked as created
         }
         # Update the tenant in the database
-        mongo.db.tenants.update_one(
+        mongo.db.tenants_collection.update_one(
             {"_id": ObjectId(tenant_id)},
             {"$set": updated_tenant}
         )
@@ -251,7 +260,7 @@ def edit(tenant_id):
         return redirect(url_for("detail", tenant_id=tenant_id))
     else:
         # Retrieve the tenant to edit
-        tenant_to_show = mongo.db.tenants.find_one(
+        tenant_to_show = mongo.db.tenants_collection.find_one(
             {"_id": ObjectId(tenant_id)})
 
         if tenant_to_show:
@@ -267,8 +276,9 @@ def delete(tenant_id):
 
     # Remove tenant_id from session
     if tenant:
-        mongo.db.tenants.delete_one({"_id": ObjectId(tenant_id)})
+        mongo.db.tenants_collection.delete_one({"_id": ObjectId(tenant_id)})
         session.pop("tenant_id", None)
+        flash("You have deleted your account.", "info")
 
     return redirect(url_for("create"))
 
@@ -287,19 +297,19 @@ def login():
             flash("Please enter your password.", "danger")
             return redirect(url_for("login"))
 
-        tenant = tenants_collection.find_one({"email": email})
+        tenant = mongo.db.tenants_collection.find_one({"email": email})
 
         if tenant and check_password_hash(tenant["password"], password):
             session["tenant_id"] = str(tenant["_id"])
             session["tenant_name"] = tenant["name"]
             session["tenant_email"] = tenant["email"]
-            session["unit_number"] = tenant["unit_number"]
             flash("Login successful!", "success")
-            return redirect(url_for("profile"))
+            return redirect(url_for("home"))
         else:
             flash("Invalid email or password.", "danger")
 
     return render_template("login.html")
+
 
 @app.route('/maintenance', methods=['GET', 'POST'])
 def maintenance():
@@ -329,13 +339,12 @@ def maintenance():
         }
 
         # Save to the maintenance collection.
-        maintenance_collection.insert_one(maintenance_request)
+        mongo.db.maintenance_collection.insert_one(maintenance_request)
         flash("Maintenance request submitted successfully.", "success")
         return redirect(url_for('maintenance'))
 
     # For GET requests, render the maintenance page.
     return render_template('maintenance.html')
-
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -366,7 +375,7 @@ def register():
             "email": email,
             "password": hashed_password,
         }
-        mongo.db.tenants.insert_one(user_data)
+        mongo.db.tenants_collection.insert_one(user_data)
 
         flash("Registration successful! You can now log in.", "success")
         return redirect(url_for("login"))
@@ -383,7 +392,7 @@ def forgot_password():
         if user:
             # Generate a secure token (in a real app, store it in DB and email it)
             reset_token = secrets.token_urlsafe(16)
-            tenants_collection.update_one(
+            mongo.db.tenants_collection.update_one(
                 {"email": email},
                 {"$set": {"reset_token": reset_token}}
             )
