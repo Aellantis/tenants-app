@@ -306,15 +306,17 @@ def delete(tenant_id):
     return redirect(url_for("profile"))
 =======
     """Delete tenant and clear session only if the tenant exists."""
-    tenant = mongo.db.tenants.find_one({"_id": ObjectId(tenant_id)})
+    tenant = mongo.db.tenants_collection.find_one({"_id": ObjectId(tenant_id)})
 
     # Remove tenant_id from session
     if tenant:
         mongo.db.tenants_collection.delete_one({"_id": ObjectId(tenant_id)})
         session.pop("tenant_id", None)
-        flash("You have deleted your account.", "info")
+        session.pop("tenant_name", None)
+        session.pop("tenant_email", None)
+        flash("You have deleted your account. Please register again.", "info")
 
-    return redirect(url_for("create"))
+    return redirect(url_for("register"))
 
 
 @app.route("/login", methods=["GET", "POST"])
