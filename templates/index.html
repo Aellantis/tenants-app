@@ -30,7 +30,7 @@
 <body>
   <!-- NAVBAR-->
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand mx-4" href="/">Tenants App</a>
+    <a class="navbar-brand mx-4" href="{{ url_for('home') }}">Tenants App</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 >>>>>>> 1fa1b28 (fix db, fix some flash mess, made login first page you see)
@@ -39,20 +39,23 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto me-4">
         <li class="nav-item active">
-          <a class="nav-link" href="/">Home <span class="sr-only"></span></a>
+          <a class="nav-link" href="{{ url_for('home') }}">Home <span class="sr-only"></span></a>
         </li>
         <li class="nav-item">
-          {% if session.get("tenant_id") %}
-          {% if tenant %}
-          <a class="nav-link" href="{{ url_for('detail', tenant_id=session['tenant_id']) }}">Profile</a>
-          {% else %}
-          <a class="nav-link" href="{{ url_for('create') }}"> Create Profile</a>
+          {% if session.get('tenant_id') %}
+            {% if tenant and tenant.get('profile_created') %}
+              <a class="nav-link" href="{{ url_for('detail', tenant_id=session['tenant_id']) }}">Profile</a>
+            {% endif %}
           {% endif %}
+<<<<<<< HEAD
           {% else %}
           <a class="nav-link" href="{{ url_for('create') }}"> Create Profile</a>
           {% endif %}
           <a class="nav-link" href="profile">Profile</a>
         </li>
+=======
+      </li>
+>>>>>>> ea8c24c (corrected profile route)
       </ul>
     </div>
   </nav>
