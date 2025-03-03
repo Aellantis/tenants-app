@@ -75,7 +75,6 @@ maintenance_collection = mongo.db.maintenance_requests
 #   }
 # }
 
-
 @app.route("/")
 def index():
     return redirect(url_for("login"))
@@ -145,8 +144,14 @@ def payment():
 @app.route("/create", methods=["GET", "POST"])
 def create():
     """Display the tenant form page & process data from the creation form."""
+    if "tenant_id" not in session:
+        flash("You need to register or log in first.", "danger")
+        return redirect(url_for("login"))
+    
     if request.method == "POST":
-        new_tenant = {
+        tenant_id = ObjectId(session["tenant_id"]) # Use existing tenant ID
+
+        new_tenant_data = {
             "user_first_name": request.form.get("user_first_name"),
             "user_middle_initial": request.form.get("user_middle_initial"),
             "user_last_name": request.form.get("user_last_name"),
@@ -184,13 +189,15 @@ def create():
             "er_phone_num_2": request.form.get("er_phone_num_2"),
             "profile_created": True  # Flag to indicate profile creation
         }
-        tenant_insert = mongo.db.tenants_collection.insert_one(
-            new_tenant).inserted_id
 
-        # Store tenant ID in session (assuming a logged-in user flow)
-        session["tenant_id"] = str(tenant_insert)
+        # Update exisiting tenant instad of inserting a new one
+        mongo.db.tenants_collection.update_one(
+            {"_id": tenant_id},
+            {"$set": new_tenant_data}
+        )
 
-        return redirect(url_for("detail", tenant_id=tenant_insert))
+        flash("Profile created successfully!", "success")
+        return redirect(url_for("detail", tenant_id=session["tenant_id"]))
 
     return render_template("create_tenant.html")
 
@@ -272,15 +279,17 @@ def edit(tenant_id):
 @app.route("/delete/<tenant_id>", methods=["POST"])
 def delete(tenant_id):
     """Delete tenant and clear session only if the tenant exists."""
-    tenant = mongo.db.tenants.find_one({"_id": ObjectId(tenant_id)})
+    tenant = mongo.db.tenants_collection.find_one({"_id": ObjectId(tenant_id)})
 
     # Remove tenant_id from session
     if tenant:
         mongo.db.tenants_collection.delete_one({"_id": ObjectId(tenant_id)})
         session.pop("tenant_id", None)
-        flash("You have deleted your account.", "info")
+        session.pop("tenant_name", None)
+        session.pop("tenant_email", None)
+        flash("You have deleted your account. Please register again.", "info")
 
-    return redirect(url_for("create"))
+    return redirect(url_for("register"))
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -303,6 +312,11 @@ def login():
             session["tenant_id"] = str(tenant["_id"])
             session["tenant_name"] = tenant["name"]
             session["tenant_email"] = tenant["email"]
+
+            # Ensure user has completed profile creation
+            if "profile_created" not in tenant or not tenant["profile_created"]:
+                return redirect(url_for("create"))
+            
             flash("Login successful!", "success")
             return redirect(url_for("home"))
         else:
@@ -374,11 +388,22 @@ def register():
             "name": name,
             "email": email,
             "password": hashed_password,
+            "profile_created": False # Ensure profile creation is required
         }
-        mongo.db.tenants_collection.insert_one(user_data)
+        result = mongo.db.tenants_collection.insert_one(user_data)
+
+        # Get the inserted document's _id
+        tenant_id = str(result.inserted_id)
+
+        # Store user info in the session
+        session["tenant_id"] = tenant_id
+        session["tenant_name"] = name
+        session["tenant_email"] = email
 
         flash("Registration successful! You can now log in.", "success")
-        return redirect(url_for("login"))
+        # return redirect(url_for("login"))
+        # Once user registers it takes them to create their profile
+        return redirect(url_for("create"))
 
     return render_template("register.html")
 

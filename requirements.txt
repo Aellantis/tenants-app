@@ -2,3 +2,8 @@ flask
 pymongo
 python-dotenv
 gunicorn
+flask-pymongo
+flask-session
+werkzeug
+dnspython
+itsdangerous
