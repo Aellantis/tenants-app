@@ -25,7 +25,13 @@
 
 <!--PAYMENTS OVERVIEW-->
 <div class="card-body" id="home-body">
-  <span class="badge" id="user">Welcome, {{ tenant["user_first_name"] }}!</span>
+  <span class="badge" id="user">Welcome,
+    {% if tenant %}
+    {{ tenant.user_first_name }}!
+    {% else %}
+    User!
+    {% endif %}
+  </span>
   <div class="card-header" id="home-cards">
     <h5 class="card-title mx-3 mt-3">Payments Overview</h5>
     <div class="row">
@@ -106,11 +112,11 @@
         <h6><strong>Towing Truckers</strong> (123) 456-7890</h6>
       </div>
     </div>
-    <form class="p-3 col-md-7">
+    <form class="p-3 col-md-7" id="issueForm" method="POST" action="{{ url_for('submit_issue') }}">
       <div class="mb-3">
         <label for="issueDescription" class="form-label">Report an Issue/Concern</label>
-        <textarea class="form-control" id="issueDescription" rows="4"
-          placeholder="Please describe your issue(s) or concern(s)."></textarea>
+        <textarea class="form-control" id="issueDescription" name="issue_description" rows="4"
+          placeholder="Please describe your issue(s) or concern(s)." required></textarea>
       </div>
       <button type="submit" class="btn col-md-2" id="home-button">Submit</button>
       <i id="contact">*You may also reach us at front-desk@leaseoffice.com*</i>
@@ -119,4 +125,46 @@
   </div>
 </div>
 </div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="successModalLabel">Success</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Issue/Concern reported successfully.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('issueForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    fetch("{{ url_for('submit_issue') }}", {
+      method: 'POST',
+      body: new FormData(this)
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+          successModal.show();
+          this.reset(); // Clear the form
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  });
+</script>
+
+
 {% endblock %}
