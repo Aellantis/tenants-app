@@ -8,17 +8,13 @@
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs mx-1">
             <li class="nav-item">
-<<<<<<< HEAD
-                <a class="nav-link" href="#">Dashboard</a>
-=======
                 <a class="nav-link" href="{{ url_for('home') }}">Dashboard</a>
->>>>>>> 1fa1b28 (fix db, fix some flash mess, made login first page you see)
             </li>
             <li class="nav-item">
                 <a class="nav-link active" href="#">Payments</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Maintenance Request</a>
+                <a class="nav-link" href="{{ url_for('maintenance') }}">Maintenance Request</a>
             </li>
         </ul>
     </div>
@@ -112,7 +108,7 @@
                     <div class="form-check my-3">
                         <input class="form-check-input" type="checkbox" id="authorize" required>
                         <label class="form-check-label" for="authorize">
-                            I authorize Tenant App to initiate debit and credit entries to my Credit Card, Checking or
+                            I authorize RentMate to initiate debit and credit entries to my Credit Card, Checking or
                             Saving
                             Account
                         </label>

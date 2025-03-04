@@ -3,12 +3,7 @@
 
 {% block content %}
 <div class="container mt-4">
-<<<<<<< HEAD
-    <form action="/detail" method="POST" class="row g-4">
-        <!-- Left Side: Username & Employer Info -->
-=======
     <div class="row">
->>>>>>> 1b26d12 (edited layout)
         <div class="col-md-4">
             <div class="p-2">
                 <h1>Welcome, {{ tenant["user_first_name"] }}</h1>
@@ -88,24 +83,10 @@
                 </div>
             </div>
         </div>
-<<<<<<< HEAD
-		<a href="/edit/{{ tenant['_id'] }}">Edit Profile</a>
-<<<<<<< HEAD
-    </form>
-	<form action="/delete/{{ tenant['_id'] }}" method="POST" onsubmit="return confirm_delete()">
-		<input type="submit" onclick="delete_modal()" value="Delete Profile">
-=======
-    <!-- </form> -->
-	<form action="/delete/{{ tenant['_id'] }}" method="POST">
-		<button type="submit" class="btn btn-danger mt-3">Delete Profile</button>
->>>>>>> ea8c24c (corrected profile route)
-	</form>
-=======
     </div>
     <form action="/delete/{{ tenant['_id'] }}" method="POST">
         <button type="submit" class="btn btn-danger mt-3">Delete Profile</button>
     </form>
->>>>>>> 1b26d12 (edited layout)
 </div>
 
 {% endblock %}

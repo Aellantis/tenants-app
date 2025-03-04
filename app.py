@@ -18,16 +18,10 @@ app.config["MONGO_URI"] = os.getenv(
 mongo = PyMongo(app)
 
 # Collections
-<<<<<<< HEAD
-tenants_collection = db.tenants
-payments_collection = db.payments
-transactions_collection = db.transactions
-=======
 tenants_collection = mongo.db.tenants
 payments_collection = mongo.db.payments
 transactions_collection = mongo.db.transactions
 maintenance_collection = mongo.db.maintenance_requests
->>>>>>> 1fa1b28 (fix db, fix some flash mess, made login first page you see)
 
 # Example Schema:
 
@@ -80,9 +74,6 @@ maintenance_collection = mongo.db.maintenance_requests
 
 @app.route("/")
 def index():
-<<<<<<< HEAD
-    return render_template("home.html")
-=======
     return redirect(url_for("login"))
 
 
@@ -207,14 +198,9 @@ def create():
             {"$set": new_tenant_data}
         )
 
-<<<<<<< HEAD
-        return redirect(url_for("detail", tenant_id=tenant_insert)) 
-    
-=======
         flash("Profile created successfully!", "success")
         return redirect(url_for("detail", tenant_id=session["tenant_id"]))
 
->>>>>>> ea8c24c (corrected profile route)
     return render_template("create_tenant.html")
 
 @app.route("/tenant/<tenant_id>")
@@ -271,11 +257,6 @@ def edit(tenant_id):
             "profile_created": True # Ensure the profile is marked as created
         }
         # Update the tenant in the database
-<<<<<<< HEAD
-        mongo.db.tenants.update_one(
-            { "_id": ObjectId(tenant_id) },
-            { "$set": updated_tenant }
-=======
         mongo.db.tenants_collection.update_one(
             {"_id": ObjectId(tenant_id)},
             {"$set": updated_tenant}
@@ -287,9 +268,6 @@ def edit(tenant_id):
         return redirect(url_for("detail", tenant_id=tenant_id))
     else:
         # Retrieve the tenant to edit
-<<<<<<< HEAD
-        tenant_to_show = mongo.db.tenants.find_one({"_id": ObjectId(tenant_id)})
-=======
         tenant_to_show = mongo.db.tenants_collection.find_one(
             {"_id": ObjectId(tenant_id)})
 >>>>>>> 1fa1b28 (fix db, fix some flash mess, made login first page you see)
