@@ -2,12 +2,12 @@
 {% block title %} Profile {% endblock %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="container mt-4 profile_container">
     <div class="row">
         <div class="col-md-4">
             <div class="p-2">
-                <h1>Welcome, {{ tenant["user_first_name"] }}</h1>
-                <p>Here is your profile information:</p>
+                <h1>Welcome, {{ tenant["user_first_name"] }}</h1><br /><br />
+                <p><small><em>Here is your profile information:</em></small></p>
 
                 <p class="mb-2">
                     {{ tenant["user_first_name"] }} {{ tenant["user_middle_initial"] }} {{ tenant["user_last_name"] }}
@@ -26,7 +26,7 @@
                 <div class="mb-2">
                     <p class="mb-0">Employer: {{ tenant["current_employer"] }}</p>
                     <p class="mb-0">Address: {{ tenant["employer_address"] }}</p>
-                </div>
+                </div><br />
                 <a href="/edit/{{ tenant['_id'] }}" class="btn btn-sm btn-primary ms-2">Edit</a>
             </div>
         </div>
@@ -34,7 +34,7 @@
         <div class="col-md-8">
             <div class="row g-3">
                 <div class="col-md-6">
-                    <div class="p-3 border rounded">
+                    <div class="p-3 border rounded info-box">
                         <h4>Household Member #1</h4>
                         <p>First Name: {{ tenant["hm_first_name_1"] }}</p>
                         <p>Middle Initial: {{ tenant["hm_m_initial_1"] }}</p>
@@ -46,7 +46,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="p-3 border rounded">
+                    <div class="p-3 border rounded info-box">
                         <h4>Household Member #2</h4>
                         <p>First Name: {{ tenant["hm_first_name_2"] }}</p>
                         <p>Middle Initial: {{ tenant["hm_m_initial_2"] }}</p>
@@ -60,7 +60,7 @@
             </div>
             <div class="row g-3 mt-4">
                 <div class="col-md-6">
-                    <div class="p-3 border rounded">
+                    <div class="p-3 border rounded info-box">
                         <h4>Emergency Contact #1</h4>
                         <p>First Name: {{ tenant["er_first_name_1" ]}}</p>
                         <p>Middle Initial: {{ tenant["er_m_initial_1" ]}}</p>
@@ -71,7 +71,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="p-3 border rounded">
+                    <div class="p-3 border rounded info-box">
                         <h4>Emergency Contact #2</h4>
                         <p>First Name: {{ tenant["er_first_name_2" ]}}</p>
                         <p>Middle Initial: {{ tenant["er_m_initial_2" ]}}</p>
