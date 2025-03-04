@@ -1,6 +1,6 @@
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from flask_pymongo import PyMongo
 # from pymongo import MongoClient
 # from models.logic import logic_function
@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 import os
 from bson.objectid import ObjectId
 import secrets  # To generate secure reset tokens
+from datetime import datetime
 
 # Load environment variables from .env file
 load_dotenv()
@@ -25,6 +26,7 @@ tenants_collection = mongo.db.tenants
 payments_collection = mongo.db.payments
 transactions_collection = mongo.db.transactions
 maintenance_collection = mongo.db.maintenance_requests
+issues_collection = mongo.db.issues
 
 # Example Schema:
 
@@ -75,17 +77,42 @@ maintenance_collection = mongo.db.maintenance_requests
 #   }
 # }
 
+
 @app.route("/")
 def index():
     return redirect(url_for("login"))
 
 
-@app.route("/home")
+@app.route("/submit_issue", methods=["POST"])
+def submit_issue():
+    if "tenant_id" not in session:
+        return jsonify({"success": False, "message": "Not logged in"})
+
+    issue_description = request.form.get("issue_description")
+
+    if not issue_description:
+        return jsonify({"success": False, "message": "Description is required"})
+
+    issue_record = {
+        "tenant_id": ObjectId(session["tenant_id"]),
+        "description": issue_description,
+        "timestamp": datetime.utcnow(),
+        "status": "new"
+    }
+
+    mongo.db.issues_collection.insert_one(issue_record)
+
+    return jsonify({"success": True})
+
+
+@app.route("/home", methods=["GET", "POST"])
 def home():
     tenant = None
     if "tenant_id" in session:
         tenant = mongo.db.tenants_collection.find_one(
-            {"_id": ObjectId(session["tenant_id"])})
+            {"_id": ObjectId(session["tenant_id"])}
+        )
+
     return render_template("home.html", tenant=tenant)
 
 
@@ -147,9 +174,9 @@ def create():
     if "tenant_id" not in session:
         flash("You need to register or log in first.", "danger")
         return redirect(url_for("login"))
-    
+
     if request.method == "POST":
-        tenant_id = ObjectId(session["tenant_id"]) # Use existing tenant ID
+        tenant_id = ObjectId(session["tenant_id"])  # Use existing tenant ID
 
         new_tenant_data = {
             "user_first_name": request.form.get("user_first_name"),
@@ -316,7 +343,7 @@ def login():
             # Ensure user has completed profile creation
             if "profile_created" not in tenant or not tenant["profile_created"]:
                 return redirect(url_for("create"))
-            
+
             flash("Login successful!", "success")
             return redirect(url_for("home"))
         else:
@@ -388,7 +415,7 @@ def register():
             "name": name,
             "email": email,
             "password": hashed_password,
-            "profile_created": False # Ensure profile creation is required
+            "profile_created": False  # Ensure profile creation is required
         }
         result = mongo.db.tenants_collection.insert_one(user_data)
 
@@ -412,7 +439,7 @@ def register():
 def forgot_password():
     if request.method == 'POST':
         email = request.form.get('email')
-        user = tenants_collection.find_one({"email": email})
+        user = mongo.db.tenants_collection.find_one({"email": email})
 
         if user:
             # Generate a secure token (in a real app, store it in DB and email it)
