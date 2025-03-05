@@ -42,8 +42,9 @@
                     <!-- Left Column: Payment Form -->
                     <div class="col-md-6 card-body">
                         <div class="card-header">
-                            <button class="btn btn-link my-4 p-0" href="{{ url_for('home') }}>&lt; Back</button>
+                            <button class="btn btn-link my-4 p-0" href="{{ url_for('home') }}">&lt; Back</button>
                             <input type="hidden" name="tenant_id" value="{{ session['tenant_id'] }}">
+
                             <div class="mb-4">
                                 <label class="form-label fw-bold">1. Choose your payment amount</label>
                                 <input class="form-control" placeholder="Enter amount" type="number" name="amount" required>
