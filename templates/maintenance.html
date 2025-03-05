@@ -3,111 +3,115 @@
 {% block title %}Maintenance Request{% endblock %}
 
 {% block content %}
-<!--NAVIGATION-->
 <div class="card">
     <div class="card-header" id="home-cards">
-      <ul class="nav nav-tabs card-header-tabs mx-1">
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('home') }}">Dashboard</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('payment') }}">Payments</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="{{ url_for('maintenance') }}">Maintenance Request</a>
-        </li>
-      </ul>
+        <ul class="nav nav-tabs card-header-tabs mx-1">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('home') }}">Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('payment') }}">Payments</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="{{ url_for('maintenance') }}">Maintenance Request</a>
+            </li>
+        </ul>
     </div>
-  </div>
-
-
-
-
+</div>
 
 <div id="home-body" class="p-4">
+    <div class="container mt-4">
 
-<!-- MAIN CONTENT -->
-<div class="container mt-4">
-    <div class="card p-4">
-        <h4>Maintenance Request</h4>
-        <form method="POST" enctype="multipart/form-data">
-            <div class="row">
-                <div class="col-md-6">
-                    <label for="reason" class="form-label">Reason:</label>
-                    <select id="reason" name="reason" class="form-select mb-3" onchange="toggleOtherReason()">
-                        <option>Water Leak</option>
-                        <option>No Electricity</option>
-                        <option>Others</option>
-                    </select>
-                    <input type="text" id="other-reason" name="other_reason" class="form-control mb-3"
-                        placeholder="Specify other reason" style="display:none;">
+        <!-- Maintenance Request Card -->
+        <div class="card p-4 mb-4">
+            <h4>Maintenance Request</h4>
 
-                    <label class="form-label">Upload Images:</label>
-                    <input type="file" name="image_upload" class="form-control mb-3">
+            <form id="maintenance-form">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="reason" class="form-label">Reason:</label>
+                        <select id="reason" name="reason" class="form-select mb-3" onchange="toggleOtherReason()">
+                            <option>Water Leak</option>
+                            <option>No Electricity</option>
+                            <option>Others</option>
+                        </select>
+                        <input type="text" id="other-reason" name="other_reason" class="form-control mb-3"
+                            placeholder="Specify other reason" style="display:none;">
 
-                    <label class="form-label">Entry when no one home:</label>
-                    <select class="form-select mb-3" name="entry_when_no_one_home">
-                        <option>Yes</option>
-                        <option>No</option>
-                    </select>
+                        <!-- 🖼️ Upload Images Section -->
+                        <label class="form-label">Upload Images:</label>
+                        <input type="file" name="image_upload" class="form-control mb-3" multiple>
 
-                    <label class="form-label">Pets present:</label>
-                    <select class="form-select mb-3" name="pets_present">
-                        <option>Yes</option>
-                        <option>No</option>
-                    </select>
+                        <label class="form-label">Entry when no one home:</label>
+                        <select class="form-select mb-3" name="entry_when_no_one_home">
+                            <option>Yes</option>
+                            <option>No</option>
+                        </select>
 
-                    <label for="priority" class="form-label">Priority Level:</label>
-                    <select id="priority" name="priority" class="form-select mb-3">
-                        <option>Urgent (Gas Leak / Electricity)</option>
-                        <option>Important (Faucet Leak)</option>
-                        <option>Not Priority (Hard Closing Window)</option>
-                    </select>
+                        <label class="form-label">Pets present:</label>
+                        <select class="form-select mb-3" name="pets_present">
+                            <option>Yes</option>
+                            <option>No</option>
+                        </select>
 
-                    <label for="additional" class="form-label">Additional Information:</label>
-                    <textarea id="additional" name="additional" class="form-control" rows="3"></textarea>
+                        <label for="priority" class="form-label">Priority Level:</label>
+                        <select id="priority" name="priority" class="form-select mb-3">
+                            <option>Urgent (Gas Leak / Electricity)</option>
+                            <option>Important (Faucet Leak)</option>
+                            <option>Not Priority (Hard Closing Window)</option>
+                        </select>
 
-                    <h4>Schedule</h4>
-                    <label class="form-label">Date:</label>
-                    <input type="date" id="schedule-date" name="schedule_date" class="form-control mb-3">
-                    <label class="form-label">Time:</label>
-                    <input type="time" id="schedule-time" name="schedule_time" class="form-control mb-3"
-                        value="08:00">
+                        <label for="additional" class="form-label">Additional Information:</label>
+                        <textarea id="additional" name="additional" class="form-control" rows="3"></textarea>
 
-                    <button type="submit" class="btn mt-5 mb-3 mx-3 col-md-4" id="home-button">Submit Request</button>
+                        <h4>Schedule</h4>
+                        <label class="form-label">Date:</label>
+                        <input type="date" id="schedule-date" name="schedule_date" class="form-control mb-3">
+                        <label class="form-label">Time:</label>
+                        <input type="time" id="schedule-time" name="schedule_time" class="form-control mb-3"
+                            value="08:00">
+
+                        <button type="submit" class="btn mt-5 mb-3 mx-3 col-md-4" id="home-button">Submit Request</button>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h4>Requests</h4>
+                        <ul id="request-list" class="list-group mb-3"></ul>
+                    </div>
                 </div>
+            </form>
+        </div> 
 
-                <div class="col-md-6">
-                    <h4>Requests</h4>
-                    <ul id="request-list" class="list-group mb-3"></ul>
+        <!-- Feedback Card SEPARATE CARD -->
+        <div class="card p-4">
+            <h4>Feedback</h4>
 
-                    <h4>Feedback</h4>
-                    <label class="form-label">Select Issue:</label>
-                    <select id="feedback-issues" class="form-select mb-3"></select>
-                    <label class="form-label">Was your maintenance request resolved?</label>
-                    <select class="form-select mb-3">
-                        <option>Yes</option>
-                        <option>No</option>
-                    </select>
+            <form id="feedback-form">
+                <label class="form-label">Select Issue:</label>
+                <select id="feedback-issues" class="form-select mb-3"></select>
 
-                    <label class="form-label">Did it solve in a timely manner?</label>
-                    <select class="form-select mb-3">
-                        <option>Yes</option>
-                        <option>No</option>
-                    </select>
+                <label class="form-label">Was your maintenance request resolved?</label>
+                <select class="form-select mb-3">
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
 
-                    <label class="form-label">Additional Feedback:</label>
-                    <textarea class="form-control mb-3" rows="3"
-                        placeholder="Provide any additional feedback"></textarea>
+                <label class="form-label">Did it solve in a timely manner?</label>
+                <select class="form-select mb-3">
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
 
-                    <button type="submit" class="btn mt-5 mb-3 mx-3 col-md-4" id="home-button" >Submit Feedback</button>
-                </div>
-            </div>
-        </form>
-    </div> <!-- End of white card -->
-</div> <!-- End of container -->
+                <label class="form-label">Additional Feedback:</label>
+                <textarea class="form-control mb-3" rows="3"
+                    placeholder="Provide any additional feedback"></textarea>
 
-</div> <!-- End of home-body -->
+                <button type="submit" class="btn mt-5 mb-3 mx-3 col-md-4" id="home-button">Submit Feedback</button>
+            </form>
+        </div> 
+
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
@@ -117,43 +121,71 @@
         const otherReasonInput = document.getElementById("other-reason");
         otherReasonInput.style.display = reasonSelect.value === "Others" ? "block" : "none";
     }
-    
-    // If you want to keep the client-side dynamic list functionality for requests,
-    // you can keep these functions. Just note that the form submission now saves the data.
-    function submitRequest() {
-        // This function may now be optional if you're submitting the entire form.
-        let reason = document.getElementById("reason").value;
-        if (reason === "Others") {
-            reason = document.getElementById("other-reason").value;
+
+    document.addEventListener("DOMContentLoaded", function () {
+        console.log("Script loaded and running!");
+
+        const maintenanceForm = document.getElementById("maintenance-form");
+        if (!maintenanceForm) {
+            console.error("Maintenance form not found!");
+            return;
         }
-        const priority = document.getElementById("priority").value;
-        const additional = document.getElementById("additional").value;
-        const scheduleDate = document.getElementById("schedule-date").value;
-        const scheduleTime = document.getElementById("schedule-time").value;
-        
-        const requestList = document.getElementById("request-list");
-        const newItem = document.createElement("li");
-        newItem.className = "list-group-item";
-        newItem.textContent = `${reason} - ${priority} (${scheduleDate} at ${scheduleTime})`;
-        
-        if (additional) {
-            newItem.textContent += ` (${additional})`;
+
+        maintenanceForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            console.log("Submit Request button clicked!");
+
+            let reason = document.getElementById("reason").value;
+            if (reason === "Others") {
+                reason = document.getElementById("other-reason").value;
+            }
+            const priority = document.getElementById("priority").value;
+            const additional = document.getElementById("additional").value;
+            const scheduleDate = document.getElementById("schedule-date").value;
+            const scheduleTime = document.getElementById("schedule-time").value;
+
+            console.log("Form data:", { reason, priority, scheduleDate, scheduleTime });
+
+            const requestList = document.getElementById("request-list");
+            if (!requestList) {
+                console.error("Request list not found!");
+                return;
+            }
+
+            const newItem = document.createElement("li");
+            newItem.className = "list-group-item";
+            newItem.textContent = `${reason} - ${priority} (${scheduleDate} at ${scheduleTime})`;
+            if (additional) {
+                newItem.textContent += ` (${additional})`;
+            }
+            requestList.appendChild(newItem);
+            console.log("Request added!");
+
+            updateFeedbackOptions();
+
+            maintenanceForm.reset();
+            document.getElementById("other-reason").style.display = "none";
+        });
+
+        function updateFeedbackOptions() {
+            const feedbackSelect = document.getElementById("feedback-issues");
+            feedbackSelect.innerHTML = "";
+
+            const requestListItems = document.getElementById("request-list").getElementsByTagName("li");
+            for (let i = 0; i < requestListItems.length; i++) {
+                const option = document.createElement("option");
+                option.textContent = requestListItems[i].textContent;
+                feedbackSelect.appendChild(option);
+            }
         }
-        
-        requestList.appendChild(newItem);
-        updateFeedbackOptions();
-    }
-    
-    function updateFeedbackOptions() {
-        const feedbackSelect = document.getElementById("feedback-issues");
-        feedbackSelect.innerHTML = "";
-        
-        const requestList = document.getElementById("request-list").getElementsByTagName("li");
-        for (let i = 0; i < requestList.length; i++) {
-            const option = document.createElement("option");
-            option.textContent = requestList[i].textContent;
-            feedbackSelect.appendChild(option);
-        }
-    }
+
+        const feedbackForm = document.getElementById("feedback-form");
+        feedbackForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+            console.log("Feedback submitted!");
+            alert("Feedback submitted successfully!");
+        });
+    });
 </script>
 {% endblock %}
