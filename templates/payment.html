@@ -32,6 +32,7 @@
     {% endwith %}
 </div>
 
+
 <!-- Payment Form in White Card -->
 <div id="home-body" class="p-4">
     <div class="container mt-4">
@@ -41,7 +42,7 @@
                     <!-- Left Column: Payment Form -->
                     <div class="col-md-6 card-body">
                         <div class="card-header">
-                            <button class="btn btn-link my-4 p-0">&lt; Back</button>
+                            <button class="btn btn-link my-4 p-0" href="{{ url_for('home') }}>&lt; Back</button>
                             <input type="hidden" name="tenant_id" value="{{ session['tenant_id'] }}">
                             <div class="mb-4">
                                 <label class="form-label fw-bold">1. Choose your payment amount</label>
